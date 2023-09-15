@@ -37,4 +37,5 @@ public class Estudiante {
     String tipoColegio;
     String tipoPagoArancel;
     Integer interes;
+    //Lista razones
 }
