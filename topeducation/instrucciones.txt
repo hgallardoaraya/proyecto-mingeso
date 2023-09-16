@@ -1,0 +1,7 @@
+importar bdd (la bdd topeducation debe estar creada, aunque vacia)
+
+mysql -u root -p topeducation < dump.sql
+
+exportar bdd
+
+mysqldump -u root -p topeducation > dump.sql
