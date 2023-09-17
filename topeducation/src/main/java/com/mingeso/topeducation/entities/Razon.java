@@ -1,9 +1,6 @@
 package com.mingeso.topeducation.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,15 +12,23 @@ import java.sql.Date;
 @Data
 public class Razon {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-    String tipo;
     @Column(name = "numero_razon")
     Integer numero;
     @Column(name = "monto")
     Integer monto;
-    String estado;
     @Column(name = "fecha_inicio")
     Date fechaInicio;
     @Column(name = "fecha_fin")
     Date fechaFin;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_tipo_razon", referencedColumnName = "id")
+    TipoRazon tipo;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_estado_razon", referencedColumnName = "id")
+    EstadoRazon estado;
+    @ManyToOne
+    @JoinColumn(name="id_estudiante", nullable=false)
+    Estudiante estudiante;
 }

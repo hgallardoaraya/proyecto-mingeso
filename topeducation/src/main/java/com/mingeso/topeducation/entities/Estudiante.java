@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Year;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "estudiante")
@@ -44,4 +45,7 @@ public class Estudiante {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_interes_meses_atraso", referencedColumnName = "id")
     InteresMesesAtraso interesMesesAtraso;
+
+    @OneToMany(mappedBy="estudiante")
+    Set<Razon> razones;
 }
