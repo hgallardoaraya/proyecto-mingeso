@@ -1,5 +1,6 @@
 package com.mingeso.topeducation.controllers;
 
+import com.mingeso.topeducation.entities.Estudiante;
 import com.mingeso.topeducation.requests.SaveEstudianteRequest;
 import com.mingeso.topeducation.responses.ApiResponse;
 import com.mingeso.topeducation.services.EstudianteService;
@@ -10,6 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/estudiantes")
@@ -29,13 +34,24 @@ public class EstudianteController {
 
 
     @PostMapping
-    @ResponseStatus(code = HttpStatus.SEE_OTHER)
     public ResponseEntity<?> saveEstudiante(@RequestBody SaveEstudianteRequest request) {
         estudianteService.saveEstudiante(request);
         ApiResponse response = new ApiResponse(HttpStatus.CREATED.value(),
                 "Estudiante ingresado correctamente!",
                 "/estudiantes/exito");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getMaxCuotasByRut(@RequestParam("rut") String rut){
+        Integer maxCuotas = estudianteService.getMaxCuotasByRut(rut);
+        Map<String, Integer> responseData = new HashMap<>();
+        responseData.put("maxCuotas", maxCuotas);
+        ApiResponse response = new ApiResponse(HttpStatus.OK.value(),
+                "Consulta realizada con éxito!",
+                responseData
+                );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

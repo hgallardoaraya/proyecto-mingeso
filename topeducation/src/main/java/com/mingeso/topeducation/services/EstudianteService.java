@@ -1,13 +1,7 @@
 package com.mingeso.topeducation.services;
 
-import com.mingeso.topeducation.entities.Estudiante;
-import com.mingeso.topeducation.entities.InteresMesesAtraso;
-import com.mingeso.topeducation.entities.TipoColegio;
-import com.mingeso.topeducation.entities.TipoPagoArancel;
-import com.mingeso.topeducation.repositories.EstudianteRepository;
-import com.mingeso.topeducation.repositories.InteresMesesAtrasoRepository;
-import com.mingeso.topeducation.repositories.TipoColegioRepository;
-import com.mingeso.topeducation.repositories.TipoPagoArancelRepository;
+import com.mingeso.topeducation.entities.*;
+import com.mingeso.topeducation.repositories.*;
 import com.mingeso.topeducation.requests.SaveEstudianteRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +16,8 @@ public class EstudianteService {
     TipoPagoArancelRepository tipoPagoArancelRepository;
     @Autowired
     InteresMesesAtrasoRepository interesMesesAtrasoRepository;
+    @Autowired
+    MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
 
     public void saveEstudiante(SaveEstudianteRequest request){
         try{
@@ -38,6 +34,15 @@ public class EstudianteService {
             estudiante.setInteresMesesAtraso(interesMesesAtraso);
 
             estudianteRepository.save(estudiante);
+        }catch(Exception e){
+            throw new RuntimeException("Error " + e.getMessage());
+        }
+    }
+
+    public Integer getMaxCuotasByRut(String rut){
+        try{
+            Estudiante estudiante = estudianteRepository.findByRut(rut);
+            return maxCuotasTipoColegioRepository.findMaxCuotasByTipoColegio(estudiante.getTipoColegio().getId());
         }catch(Exception e){
             throw new RuntimeException("Error " + e.getMessage());
         }

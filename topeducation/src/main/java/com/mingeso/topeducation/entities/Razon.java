@@ -1,5 +1,6 @@
 package com.mingeso.topeducation.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,5 +31,6 @@ public class Razon {
     EstadoRazon estado;
     @ManyToOne
     @JoinColumn(name="id_estudiante", nullable=false)
+    @JsonBackReference
     Estudiante estudiante;
 }

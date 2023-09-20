@@ -1,5 +1,7 @@
 package com.mingeso.topeducation.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +18,8 @@ public class TipoColegio {
     @Column(name = "tipo")
     String tipo;
     @OneToOne(mappedBy = "tipoColegio")
+    @JsonBackReference
+            @JsonIgnore
     Estudiante estudiante;
     @OneToOne(mappedBy = "tipoColegio")
     MaxCuotasTipoColegio maxCuotasTipoColegio;

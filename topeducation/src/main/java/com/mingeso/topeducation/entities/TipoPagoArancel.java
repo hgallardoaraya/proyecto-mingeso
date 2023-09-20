@@ -1,5 +1,7 @@
 package com.mingeso.topeducation.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,5 +18,6 @@ public class TipoPagoArancel {
     @Column(name = "tipo")
     String tipo;
     @OneToOne(mappedBy = "tipoPagoArancel")
+    @JsonBackReference
     Estudiante estudiante;
 }

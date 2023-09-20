@@ -14,7 +14,7 @@ public class MaxCuotasTipoColegio {
     @Id
     Integer id;
     @Column(name = "max_cuotas")
-    Integer max_cuotas;
+    Integer maxCuotas;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_colegio", referencedColumnName = "id")
     TipoColegio tipoColegio;

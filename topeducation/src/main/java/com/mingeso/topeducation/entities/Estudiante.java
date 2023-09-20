@@ -1,13 +1,16 @@
 package com.mingeso.topeducation.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.time.Year;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -30,22 +33,28 @@ public class Estudiante {
     @Column(name = "apellido2")
     String apellido2;
     @Column(name = "fecha_nacimiento")
-    @JsonFormat(pattern="yyyy-MM-dd")
     Date fechaNacimiento;
     @Column(name = "anio_egreso")
-    Year anioEgreso;
+    Integer anioEgreso;
     @Column(name = "nombre_colegio")
     String nombreColegio;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_colegio", referencedColumnName = "id")
+//    @JsonManagedReference
+    @JsonIgnore
     TipoColegio tipoColegio;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_pago_arancel", referencedColumnName = "id")
+//    @JsonManagedReference
+    @JsonIgnore
     TipoPagoArancel tipoPagoArancel;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_interes_meses_atraso", referencedColumnName = "id")
+//    @JsonManagedReference
+    @JsonIgnore
     InteresMesesAtraso interesMesesAtraso;
-
     @OneToMany(mappedBy="estudiante")
+//    @JsonManagedReference
+    @JsonIgnore
     Set<Razon> razones;
 }

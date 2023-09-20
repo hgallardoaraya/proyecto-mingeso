@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EstudianteRepository extends JpaRepository<Estudiante, Integer> {
-    @Query("SELECT e FROM Estudiante e WHERE e.rut = :rut")
+    @Query("select e from Estudiante e where e.rut = :rut")
     Estudiante findByRut(@Param("rut") String rut);
 }
