@@ -17,4 +17,6 @@ public class TipoColegio {
     String tipo;
     @OneToOne(mappedBy = "tipoColegio")
     Estudiante estudiante;
+    @OneToOne(mappedBy = "tipoColegio")
+    MaxCuotasTipoColegio maxCuotasTipoColegio;
 }

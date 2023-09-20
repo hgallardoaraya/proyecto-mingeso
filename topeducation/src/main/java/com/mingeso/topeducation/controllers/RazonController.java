@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/razones")
@@ -23,9 +24,8 @@ public class RazonController {
 //    }
 
     @PostMapping("/generar")
-    public ResponseEntity<?> generarRazones(@RequestBody GenerarRazonesRequest request){
-        System.out.println(request);
-        razonService.generarRazones(request);
+    public ResponseEntity<?> generarRazones(@RequestParam String rut){
+        razonService.generarRazonesEstudiante(rut);
         ApiResponse response = new ApiResponse(HttpStatus.CREATED.value(), "Cuotas generadas correcamente", "/exito");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

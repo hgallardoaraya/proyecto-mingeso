@@ -9,8 +9,12 @@ import com.mingeso.topeducation.repositories.EstudianteRepository;
 import com.mingeso.topeducation.repositories.RazonRepository;
 import com.mingeso.topeducation.repositories.TipoRazonRepository;
 import com.mingeso.topeducation.requests.GenerarRazonesRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 @Service
 public class RazonService {
@@ -23,24 +27,18 @@ public class RazonService {
     @Autowired
     EstudianteRepository estudianteRepository;
 
-    public void generarRazones(GenerarRazonesRequest request){
+    @Transactional
+    public void generarRazonesEstudiante(String rut){
         try{
-            Razon razon = request.getRazon();
+            Estudiante estudiante = estudianteRepository.findByRut(rut);
 
-            Integer idTipoRazon = request.getIdTipoRazon();
-            TipoRazon tipoRazon = tipoRazonRepository.findById(idTipoRazon).get();
 
-            Integer idEstadoRazon = request.getIdEstadoRazon();
-            EstadoRazon estadoRazon = estadoRazonRepository.findById(idEstadoRazon).get();
+            ArrayList<Razon> razones = new ArrayList<>();
+            for(int i = 0; i < 15; i++){
 
-            String rutEstudiante = request.getRutEstudiante();
-            Estudiante estudiante = estudianteRepository.findByRut(rutEstudiante);
+            }
 
-            razon.setTipo(tipoRazon);
-            razon.setEstado(estadoRazon);
-            razon.setEstudiante(estudiante);
 
-            razonRepository.save(razon);
         }catch(Exception e){
             throw new RuntimeException("Error " + e.getMessage());
         }
