@@ -20,4 +20,7 @@ public class TipoPagoArancel {
     @OneToOne(mappedBy = "tipoPagoArancel")
     @JsonBackReference
     Estudiante estudiante;
+    @OneToOne(mappedBy = "tipoPagoArancel")
+    @JsonBackReference
+    DescuentoTipoPagoArancel descuentoTipoPagoArancel;
 }

@@ -40,12 +40,11 @@ public class Estudiante {
     String nombreColegio;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_colegio", referencedColumnName = "id")
-//    @JsonManagedReference
-    @JsonIgnore
+    @JsonManagedReference
     TipoColegio tipoColegio;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_pago_arancel", referencedColumnName = "id")
-//    @JsonManagedReference
+    @JsonManagedReference
     @JsonIgnore
     TipoPagoArancel tipoPagoArancel;
     @OneToOne(cascade = CascadeType.ALL)

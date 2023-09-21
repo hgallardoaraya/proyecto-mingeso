@@ -19,8 +19,10 @@ public class TipoColegio {
     String tipo;
     @OneToOne(mappedBy = "tipoColegio")
     @JsonBackReference
-            @JsonIgnore
     Estudiante estudiante;
     @OneToOne(mappedBy = "tipoColegio")
     MaxCuotasTipoColegio maxCuotasTipoColegio;
+    @OneToOne(mappedBy = "tipoColegio")
+    @JsonBackReference
+    DescuentoTipoColegio descuentoTipoColegio;
 }

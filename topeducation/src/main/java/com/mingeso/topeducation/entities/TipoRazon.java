@@ -18,4 +18,6 @@ public class TipoRazon {
     String tipo;
     @OneToOne(mappedBy = "tipo")
     Razon razon;
+    @OneToOne(mappedBy = "tipo")
+    TotalRazon totalRazon;
 }

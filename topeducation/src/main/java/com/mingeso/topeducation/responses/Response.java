@@ -9,19 +9,19 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse {
+public class Response {
     Integer status;
     String message;
     String pathRedirect;
     Object data;
 
-    public ApiResponse(Integer status, String message, String urlRedirect){
+    public Response(Integer status, String message, String urlRedirect){
         this.status = status;
         this.message = message;
         this.pathRedirect = urlRedirect;
     }
 
-    public ApiResponse(Integer status, String message, Object data){
+    public Response(Integer status, String message, Object data){
         this.status = status;
         this.message = message;
         this.data = data;

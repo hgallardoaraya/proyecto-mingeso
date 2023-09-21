@@ -1,14 +1,12 @@
 package com.mingeso.topeducation.controllers;
 
-import com.mingeso.topeducation.requests.GenerarRazonesRequest;
-import com.mingeso.topeducation.responses.ApiResponse;
+import com.mingeso.topeducation.responses.Response;
 import com.mingeso.topeducation.services.RazonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -24,9 +22,11 @@ public class RazonController {
 //    }
 
     @PostMapping("/generar")
-    public ResponseEntity<?> generarRazones(@RequestParam String rut){
-        razonService.generarRazonesEstudiante(rut);
-        ApiResponse response = new ApiResponse(HttpStatus.CREATED.value(), "Cuotas generadas correcamente", "/exito");
+    public ResponseEntity<?> generarCuotas(@RequestParam String rut,
+                                           @RequestParam Integer numCuotas
+                                           ){
+        razonService.generarCuotas(rut, numCuotas);
+        Response response = new Response(HttpStatus.CREATED.value(), "Cuotas generadas correcamente", "/exito");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

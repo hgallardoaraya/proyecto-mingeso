@@ -1,18 +1,14 @@
 package com.mingeso.topeducation.controllers;
 
-import com.mingeso.topeducation.entities.Estudiante;
 import com.mingeso.topeducation.requests.SaveEstudianteRequest;
-import com.mingeso.topeducation.responses.ApiResponse;
+import com.mingeso.topeducation.responses.Response;
 import com.mingeso.topeducation.services.EstudianteService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +17,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EstudianteController {
     private final EstudianteService estudianteService;
-
     @GetMapping("/ingresar")
     public String ingresar(){
         return "ingresar-estudiante.html";
@@ -36,7 +31,7 @@ public class EstudianteController {
     @PostMapping
     public ResponseEntity<?> saveEstudiante(@RequestBody SaveEstudianteRequest request) {
         estudianteService.saveEstudiante(request);
-        ApiResponse response = new ApiResponse(HttpStatus.CREATED.value(),
+        Response response = new Response(HttpStatus.CREATED.value(),
                 "Estudiante ingresado correctamente!",
                 "/estudiantes/exito");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -47,7 +42,7 @@ public class EstudianteController {
         Integer maxCuotas = estudianteService.getMaxCuotasByRut(rut);
         Map<String, Integer> responseData = new HashMap<>();
         responseData.put("maxCuotas", maxCuotas);
-        ApiResponse response = new ApiResponse(HttpStatus.OK.value(),
+        Response response = new Response(HttpStatus.OK.value(),
                 "Consulta realizada con éxito!",
                 responseData
                 );
