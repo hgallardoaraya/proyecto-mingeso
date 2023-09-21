@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "razon")
@@ -20,9 +22,9 @@ public class Razon {
     @Column(name = "monto")
     Integer monto;
     @Column(name = "fecha_inicio")
-    Date fechaInicio;
+    LocalDate fechaInicio;
     @Column(name = "fecha_fin")
-    Date fechaFin;
+    LocalDate fechaFin;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_razon", referencedColumnName = "id")
     TipoRazon tipo;
@@ -33,4 +35,14 @@ public class Razon {
     @JoinColumn(name="id_estudiante", nullable=false)
     @JsonBackReference
     Estudiante estudiante;
+
+    public Razon(Integer numero, Integer monto, LocalDate fechaInicio, LocalDate fechaFin, TipoRazon tipo, EstadoRazon estado, Estudiante estudiante){
+        this.numero = numero;
+        this.monto = monto;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.tipo = tipo;
+        this.estado = estado;
+        this.estudiante = estudiante;
+    }
 }

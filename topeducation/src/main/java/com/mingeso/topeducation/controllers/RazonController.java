@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class RazonController {
     private final RazonService razonService;
 
-//    @GetMapping("/cuotas/generar")
-//    public String generarCuotas(){
-//        return "ingresar-cuotas.html";
-//    }
+    @GetMapping("/generar")
+    public String generarCuotas(){
+        return "generar-cuotas.html";
+    }
 
     @PostMapping("/generar")
     public ResponseEntity<?> generarCuotas(@RequestParam String rut,

@@ -13,7 +13,7 @@
 <body>
     <div class="p-3 w-screen h-screen">
         <h1 class="text-3xl mb-4 font-bold">Ingresar estudiante</h1>
-        <form id="ingresarEstudianteForm" class="flex flex-col gap-3 w-fit" action="" enctype="multipart/form-data">
+        <form id="ingresarEstudianteForm" class="flex flex-col gap-3 w-fit" action="">
             <div class="flex flex-col">
                 <label for="nombre1" class="text-gray-950 font-medium">Primer nombre:</label>
                 <input type="text" id="nombre1" name="nombre1" placeholder="Ej: Juán"  class="text-gray-800" required/>
@@ -63,7 +63,6 @@
 
 <script>
     let ingresarEstudianteForm = document.getElementById("ingresarEstudianteForm");
-
     
     //enviar formulario para ingresar estudiante
     ingresarEstudianteForm.addEventListener("submit", e => enviarEstudianteForm(e))

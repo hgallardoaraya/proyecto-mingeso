@@ -37,7 +37,7 @@ public class EstudianteController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/maxcuotas")
     public ResponseEntity<?> getMaxCuotasByRut(@RequestParam("rut") String rut){
         Integer maxCuotas = estudianteService.getMaxCuotasByRut(rut);
         Map<String, Integer> responseData = new HashMap<>();
