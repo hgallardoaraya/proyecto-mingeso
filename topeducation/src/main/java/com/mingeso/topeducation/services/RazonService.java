@@ -4,6 +4,7 @@ import com.mingeso.topeducation.entities.*;
 import com.mingeso.topeducation.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -49,35 +50,41 @@ public class RazonService {
             //Aplicar porcentaje descuentos
             totalArancel = totalArancel - ((totalArancel * porcentajeDescuento) / 100);
 
-            //Generar cuotas
-            Integer cuota = totalArancel / numCuotas;
-            EstadoRazon estadoRazon = estadoRazonRepository.findById(1).get();
-            TipoRazon tipoRazon = tipoRazonRepository.findById(1).get();
             // Obtén la fecha actual
             LocalDate fechaActual = LocalDate.now();
 
-            // Obtén el mes actual
-            Month mesActual = fechaActual.getMonth();
+            //cambiar esto a variable en bdd
+            LocalDate fechaInicioClases = LocalDate.of(fechaActual.getYear(), Month.MARCH, 1);
+            LocalDate fechaInicioMatricula = fechaInicioClases.minusDays(5);
 
-            // Calcula el mes del próximo 5
-            Month mesProximo5;
-            if (mesActual == Month.DECEMBER) {
-                mesProximo5 = Month.JANUARY;
-            } else {
-                mesProximo5 = mesActual.plus(1);
-            }
-            // Crea la fecha del próximo 5 del próximo mes
-            LocalDate fechaInicio = LocalDate.of(fechaActual.getYear(), mesProximo5, 5);
-            LocalDate fechaFin = LocalDate.of(fechaActual.getYear(), mesProximo5, 10);
+
+            TipoRazon tipoMatricula = tipoRazonRepository.findById(0).get();
+            EstadoRazon estadoPendiente = estadoRazonRepository.findById(1).get();
+
+            // Matricula
+            Razon matricula = new Razon(0, totalMatricula, fechaInicioMatricula, fechaInicioClases, tipoMatricula, estadoPendiente, estudiante);
+            razonRepository.save(matricula);
+
+            //Generar cuotas arancel
+            LocalDate fechaInicioArancel = LocalDate.of(fechaActual.getYear(), Month.MARCH, 5);
+            LocalDate fechaFinArancel = LocalDate.of(fechaActual.getYear(), Month.MARCH, 10);
+            Integer cuota = totalArancel / numCuotas;
+            TipoRazon tipoArancel = tipoRazonRepository.findById(1).get();
 
             for(Integer i = 0; i < numCuotas; i++){
                 Integer numero = i + 1;
-                Razon razon = new Razon(numero, cuota, fechaInicio, fechaFin, tipoRazon, estadoRazon, estudiante);
-                razonRepository.save(razon);
+                Razon arancel = new Razon(numero, cuota, fechaInicioArancel, fechaFinArancel, tipoArancel, estadoPendiente, estudiante);
+                razonRepository.save(arancel);
+                fechaInicioArancel = fechaInicioArancel.plusMonths(1);
+                fechaFinArancel = fechaFinArancel.plusMonths(1);
             }
 
         }catch(Exception e){
             throw new RuntimeException("Error " + e.getMessage());
         }
+    }
+
+    public ArrayList<Razon> getRazones(String rut) {
+        return razonRepository.findAllByRut(rut);
     }
 }

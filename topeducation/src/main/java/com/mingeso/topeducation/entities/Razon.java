@@ -1,6 +1,7 @@
 package com.mingeso.topeducation.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,9 +28,11 @@ public class Razon {
     LocalDate fechaFin;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_razon", referencedColumnName = "id")
+    @JsonManagedReference
     TipoRazon tipo;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_estado_razon", referencedColumnName = "id")
+    @JsonManagedReference
     EstadoRazon estado;
     @ManyToOne
     @JoinColumn(name="id_estudiante", nullable=false)

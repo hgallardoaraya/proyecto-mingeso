@@ -1,5 +1,6 @@
 package com.mingeso.topeducation.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,5 +17,6 @@ public class EstadoRazon {
     @Column(name = "estado")
     String estado;
     @OneToOne(mappedBy = "estado")
+    @JsonBackReference
     Razon razon;
 }

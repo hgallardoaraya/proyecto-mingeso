@@ -18,6 +18,7 @@
     <form id="generarCuotasForm" class="flex flex-col gap-3 w-fit">
         <div id="seleccionarCuotasContainer" class="flex flex-col">        
         </div>           
+        <button id="generarCuotasBtn" type="submit" class="border-2 border-solid bg-blue-500 text-white font-medium py-3 px-2 uppercase pointer hidden">Generar cuotas</button>
     </form>
 </body>
 </html>
@@ -34,15 +35,21 @@
         e.preventDefault();
         const rut = document.getElementById("rut").value;
 
+        if(rut == null) return 0;
+
         console.log(rut);
         
-        const response = await fetch("http://localhost:3000/estudiantes/maxcuotas?rut=20.285.942-9");
+        const response = await fetch(`http://localhost:3000/estudiantes/maxcuotas?rut=${rut}`);
 
         const rawResponse = await response.json();
 
         console.log(rawResponse);
 
         const seleccionarCuotasContainer = document.getElementById("seleccionarCuotasContainer");
+        
+        while (seleccionarCuotasContainer.childElementCount > 0) {
+            seleccionarCuotasContainer.removeChild(seleccionarCuotasContainer.firstChild);
+        }
 
         const numCuotasLabel = document.createElement("label");
         numCuotasLabel.setAttribute("for", "numCuotas");
@@ -53,7 +60,7 @@
         numCuotasInput.setAttribute("type", "number");
         numCuotasInput.setAttribute("id", "numCuotas");
         numCuotasInput.setAttribute("name", "numCuotas");
-        numCuotasInput.setAttribute("placeholder", "Ej: 4")
+        numCuotasInput.setAttribute("placeholder", `Ej: ${rawResponse.data.maxCuotas}` );
         numCuotasInput.setAttribute("min", "1");
         numCuotasInput.setAttribute("max", rawResponse.data.maxCuotas);
         numCuotasInput.required = true;
@@ -64,12 +71,10 @@
         seleccionarCuotasContainer.appendChild(numCuotasLabel);
         seleccionarCuotasContainer.appendChild(numCuotasInput);
 
-        const numCuotasBtn = document.createElement("button");
-        numCuotasBtn.setAttribute("type", "submit");
-        numCuotasBtn.classList.add("border-2", "border-solid", "bg-blue-500", "text-white", "font-medium", "py-3", "px-2", "uppercase", "pointer");
-        numCuotasBtn.textContent = "Generar cuotas";
-
-        seleccionarCuotasContainer.parentElement.appendChild(numCuotasBtn);
+        
+        const generarCuotasBtn = document.getElementById("generarCuotasBtn");
+        generarCuotasBtn.classList.remove("hidden");
+        
     }
 
     const enviarGenerarCuotasForm = async (e) => {
