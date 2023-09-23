@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.time.Year;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -56,4 +57,8 @@ public class Estudiante {
 //    @JsonManagedReference
     @JsonIgnore
     Set<Razon> razones;
+    @OneToMany(mappedBy="estudiante")
+//    @JsonManagedReference
+    @JsonIgnore
+    List<Examen> examenes;
 }

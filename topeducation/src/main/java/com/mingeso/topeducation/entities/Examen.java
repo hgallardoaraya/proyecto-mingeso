@@ -1,9 +1,7 @@
 package com.mingeso.topeducation.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +18,8 @@ public class Examen {
     Date fecha;
     @Column(name = "puntaje")
     Integer puntaje;
+    @ManyToOne
+    @JoinColumn(name="id_estudiante", nullable=false)
+    @JsonBackReference
+    Estudiante estudiante;
 }
