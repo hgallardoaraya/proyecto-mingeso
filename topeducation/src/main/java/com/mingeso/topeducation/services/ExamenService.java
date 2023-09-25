@@ -31,9 +31,7 @@ public class ExamenService {
                 XSSFRow row = worksheet.getRow(i);
                 String rut = row.getCell(0).getStringCellValue();
                 Estudiante estudiante = estudianteRepository.findByRut(rut);
-                System.out.println(row.getCell(1).getLocalDateTimeCellValue());
                 Date fecha = row.getCell(1).getDateCellValue();
-                System.out.println(row.getCell(2).getNumericCellValue());
                 Double puntaje = row.getCell(2).getNumericCellValue();
                 examenRepository.save(new Examen(fecha, puntaje, estudiante));
             }

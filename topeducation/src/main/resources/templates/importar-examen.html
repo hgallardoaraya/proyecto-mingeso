@@ -25,7 +25,7 @@
         const formData = new FormData();
         formData.append("archivo", archivo.files[0]);
 
-        const response = await fetch("http://localhost:3000/examenes", {
+        const response = await fetch("http://localhost:3000/examenes/importar", {
             method: "POST",            
             body: formData
         })
