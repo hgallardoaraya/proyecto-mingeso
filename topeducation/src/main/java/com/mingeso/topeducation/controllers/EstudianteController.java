@@ -55,15 +55,4 @@ public class EstudianteController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/examen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> importarExamen(@RequestParam String rut, @RequestParam MultipartFile archivo) throws IOException {
-        System.out.println(archivo.getOriginalFilename());
-        System.out.println(rut);
-
-        Response response = new Response(HttpStatus.CREATED.value(),
-                "Estudiante ingresado correctamente!",
-                "/estudiantes/exito");
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
 }

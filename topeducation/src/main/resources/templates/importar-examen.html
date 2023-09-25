@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang = "es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importar examen</title>
+</head>
+<body>
+    <form id="archivoForm" action="">
+        <input type="file" id="archivo">
+        <button type="submit">Enviar archivo</button>
+    </form>
+</body>
+</html>
+
+<script>
+    const archivoForm = document.getElementById("archivoForm");
+    
+    archivoForm.addEventListener("submit", (e) => enviarArchivo(e));
+
+    const enviarArchivo = async (e) => {
+        e.preventDefault();
+        
+        const archivo = document.getElementById("archivo");
+        const formData = new FormData();
+        formData.append("archivo", archivo.files[0]);
+
+        const response = await fetch("http://localhost:3000/examenes", {
+            method: "POST",            
+            body: formData
+        })
+
+        const rawResponse = await response.json();
+
+        console.log(rawResponse);
+    }
+
+</script>

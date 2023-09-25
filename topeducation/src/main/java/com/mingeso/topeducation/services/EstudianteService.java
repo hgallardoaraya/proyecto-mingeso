@@ -5,6 +5,7 @@ import com.mingeso.topeducation.repositories.*;
 import com.mingeso.topeducation.requests.SaveEstudianteRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class EstudianteService {
@@ -18,6 +19,8 @@ public class EstudianteService {
     InteresMesesAtrasoRepository interesMesesAtrasoRepository;
     @Autowired
     MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
+    @Autowired
+    ExamenRepository examenRepository;
 
     public void saveEstudiante(SaveEstudianteRequest request){
         try{
