@@ -61,4 +61,8 @@ public class Estudiante {
 //    @JsonManagedReference
     @JsonIgnore
     List<Examen> examenes;
+    @OneToMany(mappedBy="estudiante")
+//    @JsonManagedReference
+    @JsonIgnore
+    List<Pago> pagos;
 }
