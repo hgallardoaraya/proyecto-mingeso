@@ -9,6 +9,7 @@ import org.springframework.cglib.core.Local;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "razon")
@@ -38,6 +39,11 @@ public class Razon {
     @JoinColumn(name="id_estudiante", nullable=false)
     @JsonBackReference
     Estudiante estudiante;
+    @ManyToMany(mappedBy = "razones")
+    @JsonBackReference
+    Set<Pago> pagos;
+
+
 
     public Razon(Integer numero, Integer monto, LocalDate fechaInicio, LocalDate fechaFin, TipoRazon tipo, EstadoRazon estado, Estudiante estudiante){
         this.numero = numero;
