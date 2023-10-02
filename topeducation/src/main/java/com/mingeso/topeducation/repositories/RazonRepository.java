@@ -13,4 +13,7 @@ import java.util.List;
 public interface RazonRepository extends JpaRepository<Razon, Integer> {
     @Query("SELECT r from Razon r where r.estudiante.rut = :rut")
     ArrayList<Razon> findAllByRut(@Param("rut") String rut);
+
+    @Query("SELECT r from Razon r where r.estudiante.rut = :rut and (r.estado.id = 1 or r.estado.id = 2)")
+    ArrayList<Razon> findAllPendientesByRut(@Param("rut") String rut);
 }

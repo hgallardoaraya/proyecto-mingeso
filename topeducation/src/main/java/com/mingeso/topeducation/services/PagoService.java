@@ -60,4 +60,8 @@ public class PagoService {
             throw new RuntimeException("Error " + e.getMessage());
         }
     }
+
+    public ArrayList<Razon> obtenerRazonesPendientesDePago(String rut) {
+        return razonRepository.findAllPendientesByRut(rut);
+    }
 }
