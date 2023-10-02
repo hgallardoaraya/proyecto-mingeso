@@ -20,7 +20,7 @@
                     <th>Pagar</th>
                 </tr>
             </thead>
-            <tbody th:text="${#lists.size(razones) > 1} ? '' : 'No existen razones de pago pendientes ni atrasadas.'">
+            <tbody th:text="${#lists.size(razones) > 1} ? '' :g 'No existen razones de pago pendientes ni atrasadas.'">
                 <tr th:each="razon:${razones}">
                     <td th:text="${razon.numero}"></td>
                     <td th:text="${razon.tipo.tipo}"></td>
