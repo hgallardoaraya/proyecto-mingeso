@@ -56,7 +56,7 @@ public class Estudiante {
     @OneToMany(mappedBy="estudiante")
 //    @JsonManagedReference
     @JsonIgnore
-    Set<Razon> razones;
+    List<Razon> razones;
     @OneToMany(mappedBy="estudiante")
 //    @JsonManagedReference
     @JsonIgnore

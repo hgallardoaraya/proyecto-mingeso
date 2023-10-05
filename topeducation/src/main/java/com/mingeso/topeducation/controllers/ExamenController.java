@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/examenes")
@@ -35,5 +36,12 @@ public class ExamenController {
                 "Estudiante ingresado correctamente!",
                 "/estudiantes/exito");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/descuento")
+    public ResponseEntity<?> aplicarDescuento(@RequestParam String rut,
+                                               @RequestParam Date fecha){
+        examenService.aplicarDescuento(rut, fecha);
+        return new ResponseEntity<>("exito", HttpStatus.CREATED);
     }
 }

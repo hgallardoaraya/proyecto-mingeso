@@ -9,18 +9,25 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class EstudianteService {
+    private final EstudianteRepository estudianteRepository;
+     
+    private final TipoColegioRepository tipoColegioRepository;
+    private final TipoPagoArancelRepository tipoPagoArancelRepository;
+    private final InteresMesesAtrasoRepository interesMesesAtrasoRepository;
+    private final MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
+
     @Autowired
-    EstudianteRepository estudianteRepository;
-    @Autowired
-    TipoColegioRepository tipoColegioRepository;
-    @Autowired
-    TipoPagoArancelRepository tipoPagoArancelRepository;
-    @Autowired
-    InteresMesesAtrasoRepository interesMesesAtrasoRepository;
-    @Autowired
-    MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
-    @Autowired
-    ExamenRepository examenRepository;
+    public EstudianteService(EstudianteRepository estudianteRepository,
+                             TipoColegioRepository tipoColegioRepository,
+                             TipoPagoArancelRepository tipoPagoArancelRepository,
+                             InteresMesesAtrasoRepository interesMesesAtrasoRepository,
+                             MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository){
+        this.estudianteRepository = estudianteRepository;
+        this.tipoColegioRepository = tipoColegioRepository;
+        this.tipoPagoArancelRepository = tipoPagoArancelRepository;
+        this.interesMesesAtrasoRepository = interesMesesAtrasoRepository;
+        this.maxCuotasTipoColegioRepository = maxCuotasTipoColegioRepository;
+    }
 
     public void saveEstudiante(SaveEstudianteRequest request){
         try{

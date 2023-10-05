@@ -13,22 +13,34 @@ import java.util.*;
 
 @Service
 public class RazonService {
-    @Autowired
     RazonRepository razonRepository;
-    @Autowired
     TipoRazonRepository tipoRazonRepository;
-    @Autowired
     EstadoRazonRepository estadoRazonRepository;
-    @Autowired
     EstudianteRepository estudianteRepository;
-    @Autowired
     TotalRazonRepository totalRazonRepository;
-    @Autowired
     DescuentoTipoPagoArancelRepository descuentoTipoPagoArancelRepository;
-    @Autowired
     DescuentoTipoColegioRepository descuentoTipoColegioRepository;
-    @Autowired
     DescuentoAnioEgresoRepository descuentoAnioEgresoRepository;
+
+    @Autowired
+    RazonService(RazonRepository razonRepository,
+                 TipoRazonRepository tipoRazonRepository,
+                 EstadoRazonRepository estadoRazonRepository,
+                 EstudianteRepository estudianteRepository,
+                 TotalRazonRepository totalRazonRepository,
+                 DescuentoTipoPagoArancelRepository descuentoTipoPagoArancelRepository,
+                 DescuentoTipoColegioRepository descuentoTipoColegioRepository,
+                 DescuentoAnioEgresoRepository descuentoAnioEgresoRepository
+                 ){
+        this.razonRepository = razonRepository;
+        this.tipoRazonRepository = tipoRazonRepository;
+        this.estadoRazonRepository = estadoRazonRepository;
+        this.estudianteRepository = estudianteRepository;
+        this.totalRazonRepository = totalRazonRepository;
+        this.descuentoTipoPagoArancelRepository = descuentoTipoPagoArancelRepository;
+        this.descuentoTipoColegioRepository = descuentoTipoColegioRepository;
+        this.descuentoAnioEgresoRepository = descuentoAnioEgresoRepository;
+    }
 
     @Transactional
     public void generarCuotas(String rut, Integer numCuotas){
