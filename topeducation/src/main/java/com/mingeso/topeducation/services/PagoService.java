@@ -6,6 +6,7 @@ import com.mingeso.topeducation.repositories.EstudianteRepository;
 import com.mingeso.topeducation.repositories.PagoRepository;
 import com.mingeso.topeducation.repositories.RazonRepository;
 import com.mingeso.topeducation.requests.RegistrarPagoRequest;
+import com.mingeso.topeducation.utils.EntradaReporteResumen;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
@@ -80,20 +81,36 @@ public class PagoService {
     ▪ Fecha último pago
     ▪ Saldo por pagar
     ▪ Nro. Cuotas con retraso*/
-    public void calcularReporteResumen(){
-        List<Estudiante> estudiantes = estudianteRepository.findAll();
-        System.out.println(estudiantes.get(0).getExamenes().size());
-        Integer promedioExamenes = calcularPromedioExamenes(estudiantes.get(0).getExamenes());
-        Integer totalArancel = calcularTotalArancel(estudiantes.get(0).getRazones());
-        String tipoPago = estudiantes.get(0).getTipoPagoArancel().getTipo();
-        Integer numeroCuotasPactadas =  calcularNumeroCuotasPactadas(estudiantes.get(0).getRazones());
-        Integer numeroCuotasPagadas =  calcularNumeroCuotasPagadas(estudiantes.get(0).getRazones());
-        Integer arancelPagado = calcularArancelPagado(estudiantes.get(0).getRazones());
-        Integer totalPagado = calcularTotalPagado(estudiantes.get(0).getRazones());
-        LocalDate fechaUltimoPago = calcularFechaUltimoPago(estudiantes.get(0).getPagos());
-        Integer saldoPendiente = calcularArancelPendiente(estudiantes.get(0).getRazones());
-        Integer saldoTotalPendiente = calcularTotalPendiente(estudiantes.get(0).getRazones());
-        Integer numeroCuotasAtrasadas = calcularNumeroCuotasAtrasadas(estudiantes.get(0).getRazones());
+    public List<EntradaReporteResumen> calcularReporteResumen(){
+        try{
+            List<EntradaReporteResumen> reporte = new ArrayList<>();
+            List<Estudiante> estudiantes = estudianteRepository.findAll();
+            for(Estudiante estudiante : estudiantes){
+                List<Razon> razones = estudiante.getRazones();
+                List<Pago> pagos = estudiante.getPagos();
+                List<Examen> examenes = estudiante.getExamenes();
+                EntradaReporteResumen entrada = EntradaReporteResumen.builder()
+                        .rut(estudiante.getRut())
+                        .numeroExamenesRendidos(examenes.size())
+                        .promedioExamenes(calcularPromedioExamenes(examenes))
+                        .totalArancel(calcularTotalArancel(razones))
+                        .tipoPago(estudiante.getTipoPagoArancel().getTipo())
+                        .numeroCuotasPactadas(calcularNumeroCuotasPactadas(razones))
+                        .numeroCuotasPagadas(calcularNumeroCuotasPagadas(razones))
+                        .arancelPagado(calcularArancelPagado(razones))
+                        .totalPagado(calcularTotalPagado(razones))
+                        .fechaUltimoPago(calcularFechaUltimoPago(pagos))
+                        .saldoArancelPendiente(calcularArancelPendiente(razones))
+                        .saldoTotalPendiente(calcularTotalPendiente(razones))
+                        .numeroCuotasAtrasadas(calcularNumeroCuotasAtrasadas(razones))
+                        .build();
+                reporte.add(entrada);
+            }
+            System.out.println(reporte.toString());
+            return reporte;
+        }catch(Exception e){
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
     }
 
     private Integer calcularNumeroCuotasAtrasadas(List<Razon> razones){

@@ -44,8 +44,8 @@ public class PagoController {
     }
 
     @GetMapping("/reporte")
-    public ResponseEntity<?> calcularReporteResumen(){
-        pagoService.calcularReporteResumen();
-        return new ResponseEntity<>("Exito", HttpStatus.OK);
+    public String calcularReporteResumen(Model model){
+        model.addAttribute("reporte", pagoService.calcularReporteResumen());
+        return "reporte-resumen.html";
     }
 }
