@@ -43,4 +43,9 @@ public class PagoController {
         return "redirect:/registrar/ingresar-estudiante";
     }
 
+    @GetMapping("/reporte")
+    public ResponseEntity<?> calcularReporteResumen(){
+        pagoService.calcularReporteResumen();
+        return new ResponseEntity<>("Exito", HttpStatus.OK);
+    }
 }
