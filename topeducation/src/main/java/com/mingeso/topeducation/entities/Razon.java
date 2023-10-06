@@ -27,6 +27,8 @@ public class Razon {
     LocalDate fechaInicio;
     @Column(name = "fecha_fin")
     LocalDate fechaFin;
+    @Column(name = "calculo_planilla_realizado")
+    Boolean calculoPlanillaRealizado;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_razon", referencedColumnName = "id")
     @JsonManagedReference
@@ -43,9 +45,7 @@ public class Razon {
     @JsonBackReference
     Set<Pago> pagos;
 
-
-
-    public Razon(Integer numero, Integer monto, LocalDate fechaInicio, LocalDate fechaFin, TipoRazon tipo, EstadoRazon estado, Estudiante estudiante){
+    public Razon(Integer numero, Integer monto, LocalDate fechaInicio, LocalDate fechaFin, TipoRazon tipo, EstadoRazon estado, Estudiante estudiante, Boolean calculoPlanillaRealizado){
         this.numero = numero;
         this.monto = monto;
         this.fechaInicio = fechaInicio;
@@ -53,5 +53,6 @@ public class Razon {
         this.tipo = tipo;
         this.estado = estado;
         this.estudiante = estudiante;
+        this.calculoPlanillaRealizado = calculoPlanillaRealizado;
     }
 }

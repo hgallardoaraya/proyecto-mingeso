@@ -37,11 +37,4 @@ public class ExamenController {
                 "/estudiantes/exito");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
-    @PostMapping("/descuento")
-    public ResponseEntity<?> aplicarDescuento(@RequestParam String rut,
-                                               @RequestParam Date fecha){
-        examenService.aplicarDescuento(rut, fecha);
-        return new ResponseEntity<>("exito", HttpStatus.CREATED);
-    }
 }

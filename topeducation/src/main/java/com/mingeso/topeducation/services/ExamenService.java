@@ -50,23 +50,11 @@ public class ExamenService {
                 String rut = row.getCell(0).getStringCellValue();
                 Estudiante estudiante = estudianteRepository.findByRut(rut);
                 Date fecha = row.getCell(1).getDateCellValue();
-                Double puntaje = row.getCell(2).getNumericCellValue();
-                examenRepository.save(new Examen(fecha, puntaje, estudiante));
+                Integer puntaje = (int) row.getCell(2).getNumericCellValue();
+                examenRepository.save(new Examen(fecha, puntaje, estudiante, false));
             }
         }catch(Exception e){
             throw new RuntimeException("Error " + e.getMessage());
-        }
-    }
-
-    public void aplicarDescuento(String rut, Date fech){
-        Estudiante estudiante = estudianteRepository.findByRut(rut);
-        System.out.println(estudiante.getNombre1());
-        for(Examen examen : estudiante.getExamenes()){
-            System.out.println(examen.getId());
-        }
-
-        for(Razon razon : estudiante.getRazones()){
-            System.out.println(razon.getId());
         }
     }
 }

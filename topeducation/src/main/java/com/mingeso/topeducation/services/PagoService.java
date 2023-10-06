@@ -40,6 +40,9 @@ public class PagoService {
             pago.setEstudiante(estudiante);
             if(estudiante == null) throw new RuntimeException("Error, el estudiante no existe.");
 
+            // Obtén la fecha actual
+            LocalDate fechaActual = LocalDate.now();
+
             List<Razon> razones = new ArrayList<>();
             Integer total = 0;
             for(Integer idRazon : request.getIdsRazones()){
@@ -61,7 +64,7 @@ public class PagoService {
         }
     }
 
-    public ArrayList<Razon> obtenerRazonesPendientesDePago(String rut) {
+    public ArrayList<Razon> obtenerRazonesAPagar(String rut) {
         return razonRepository.findAllPendientesByRut(rut);
     }
 }

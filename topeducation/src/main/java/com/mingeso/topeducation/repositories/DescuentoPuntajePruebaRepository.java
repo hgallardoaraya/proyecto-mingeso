@@ -11,5 +11,5 @@ public interface DescuentoPuntajePruebaRepository extends JpaRepository<Descuent
             "WHERE :puntaje " +
             "BETWEEN d.puntajeInferior " +
             "AND d.puntajeSuperior")
-    Integer findDescuentoByPuntaje(@Param("puntaje") Double puntaje);
+    Integer findDescuentoByPuntaje(@Param("puntaje") Integer puntaje);
 }

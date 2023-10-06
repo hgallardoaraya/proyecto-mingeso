@@ -43,4 +43,14 @@ public class RazonController {
         Response response = new Response(HttpStatus.CREATED.value(), "Cuotas generadas correcamente", "/exito");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @GetMapping("/planilla")
+    public String vistaCalcularPlanilla(){
+        return "calcular-planilla";
+    }
+    @PostMapping("/planilla")
+    public String calcularPlanilla(){
+        razonService.calcularPlanilla();
+        return "redirect:/calcular-planilla";
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Period;
 import java.util.*;
 
 @Service
@@ -21,6 +22,9 @@ public class RazonService {
     DescuentoTipoPagoArancelRepository descuentoTipoPagoArancelRepository;
     DescuentoTipoColegioRepository descuentoTipoColegioRepository;
     DescuentoAnioEgresoRepository descuentoAnioEgresoRepository;
+    DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository;
+    ExamenRepository examenRepository;
+    InteresMesesAtrasoRepository interesMesesAtrasoRepository;
 
     @Autowired
     RazonService(RazonRepository razonRepository,
@@ -30,7 +34,10 @@ public class RazonService {
                  TotalRazonRepository totalRazonRepository,
                  DescuentoTipoPagoArancelRepository descuentoTipoPagoArancelRepository,
                  DescuentoTipoColegioRepository descuentoTipoColegioRepository,
-                 DescuentoAnioEgresoRepository descuentoAnioEgresoRepository
+                 DescuentoAnioEgresoRepository descuentoAnioEgresoRepository,
+                 DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository,
+                 InteresMesesAtrasoRepository interesMesesAtrasoRepository,
+                 ExamenRepository examenRepository
                  ){
         this.razonRepository = razonRepository;
         this.tipoRazonRepository = tipoRazonRepository;
@@ -40,6 +47,9 @@ public class RazonService {
         this.descuentoTipoPagoArancelRepository = descuentoTipoPagoArancelRepository;
         this.descuentoTipoColegioRepository = descuentoTipoColegioRepository;
         this.descuentoAnioEgresoRepository = descuentoAnioEgresoRepository;
+        this.descuentoPuntajePruebaRepository = descuentoPuntajePruebaRepository;
+        this.examenRepository = examenRepository;
+        this.interesMesesAtrasoRepository = interesMesesAtrasoRepository;
     }
 
     @Transactional
@@ -74,7 +84,7 @@ public class RazonService {
             EstadoRazon estadoPendiente = estadoRazonRepository.findById(1).get();
 
             // Matricula
-            Razon matricula = new Razon(0, totalMatricula, fechaInicioMatricula, fechaInicioClases, tipoMatricula, estadoPendiente, estudiante);
+            Razon matricula = new Razon(0, totalMatricula, fechaInicioMatricula, fechaInicioClases, tipoMatricula, estadoPendiente, estudiante, false);
             razonRepository.save(matricula);
 
             //Generar cuotas arancel
@@ -83,9 +93,9 @@ public class RazonService {
             Integer cuota = totalArancel / numCuotas;
             TipoRazon tipoArancel = tipoRazonRepository.findById(1).get();
 
-            for(Integer i = 0; i < numCuotas; i++){
+            for(int i = 0; i < numCuotas; i++){
                 Integer numero = i + 1;
-                Razon arancel = new Razon(numero, cuota, fechaInicioArancel, fechaFinArancel, tipoArancel, estadoPendiente, estudiante);
+                Razon arancel = new Razon(numero, cuota, fechaInicioArancel, fechaFinArancel, tipoArancel, estadoPendiente, estudiante, false);
                 razonRepository.save(arancel);
                 fechaInicioArancel = fechaInicioArancel.plusMonths(1);
                 fechaFinArancel = fechaFinArancel.plusMonths(1);
@@ -98,5 +108,83 @@ public class RazonService {
 
     public ArrayList<Razon> getRazones(String rut) {
         return razonRepository.findAllByRut(rut);
+    }
+
+    @Transactional
+    public void calcularPlanilla(){
+        try{
+            List<Examen> examenes = examenRepository.findAllSinRevision();
+
+            Map<String, List<Integer>> rutPuntajes = new HashMap<>();
+
+            //aplicar descuentos examenes
+            for(Examen examen : examenes){
+                if(rutPuntajes.containsKey(examen.getEstudiante().getRut())){
+                    rutPuntajes.get(examen.getEstudiante().getRut()).add(examen.getPuntaje());
+                }else{
+                    List<Integer> nuevaListaPuntajes = new ArrayList<>();
+                    nuevaListaPuntajes.add(examen.getPuntaje());
+                    rutPuntajes.put(examen.getEstudiante().getRut(), nuevaListaPuntajes);
+                }
+                //actualizar estado de revision del examen
+                examen.setRevision(true);
+                examenRepository.save(examen);
+            }
+
+            for(String rut : rutPuntajes.keySet()){
+                Integer total = rutPuntajes.get(rut).stream().reduce(0, Integer::sum);
+                Integer promedio = total/rutPuntajes.get(rut).size();
+                Integer porcentajeDescuento = descuentoPuntajePruebaRepository.findDescuentoByPuntaje(promedio);
+                List<Razon> cuotasArancel = razonRepository.findAllPendientesByRut(rut);
+                for(Razon cuota : cuotasArancel){
+                    //aplicar descuento
+                    cuota.setMonto(cuota.getMonto() - ((cuota.getMonto() * porcentajeDescuento) / 100));
+                    razonRepository.save(cuota);
+                }
+            }
+
+            //Crear intereses
+            List<Razon> cuotasArancel = razonRepository.findAllPendientes();
+            LocalDate fechaActual = LocalDate.now();
+            Razon cuotaProceso = razonRepository.findCuotaProceso(fechaActual);
+            LocalDate fechaFinProceso = cuotaProceso.getFechaFin();
+
+            if(cuotaProceso.getCalculoPlanillaRealizado()){
+                throw new Exception("El cálculo de planilla ya fue realizado para el próximo proceso en marcha en la fecha "
+                + fechaFinProceso);
+            }
+
+            List<Integer> porcentajesInteres = new ArrayList<>();
+
+            for(Razon cuota : cuotasArancel){
+                if(cuota.getFechaFin().isBefore(fechaFinProceso)){
+                    //si es anterior al proceso actual y está pendiente, pasa a atrasada
+                    if(cuota.getEstado().getId() == 1){
+                        EstadoRazon estadoCuotaAtrasada = estadoRazonRepository.findById(2).get();
+                        cuota.setEstado(estadoCuotaAtrasada);
+                        razonRepository.save(cuota);
+                    }
+
+                    //si está atrasada, se calcula su interes
+                    if(cuota.getEstado().getId() == 2){
+                        Period periodo = Period.between(cuota.getFechaFin(), fechaFinProceso);
+                        int mesesAtraso = periodo.getYears() * 12 + periodo.getMonths();
+                        Integer porcentajeInteres = interesMesesAtrasoRepository.findInteresByMesesAtraso(mesesAtraso);
+                        porcentajesInteres.add(porcentajeInteres);
+                    }
+                }
+            }
+
+            //se aplican los intereses
+            for(Razon cuota : cuotasArancel){
+                for(Integer porcentajeInteres : porcentajesInteres){
+                    cuota.setMonto(cuota.getMonto() + ((cuota.getMonto() * porcentajeInteres) / 100));
+                    cuota.setCalculoPlanillaRealizado(true);
+                    razonRepository.save(cuota);
+                }
+            }
+        }catch(Exception e){
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
     }
 }

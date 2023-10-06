@@ -28,9 +28,10 @@ public class PagoController {
     public String vistaIngresarEstudiantePago(){
         return "registrar-pago-ingreso-estudiante.html";
     }
+
     @GetMapping("/registrar")
     public String vistaSeleccionarRazonesPago(@RequestParam String rut, Model model){
-        ArrayList<Razon> razones = pagoService.obtenerRazonesPendientesDePago(rut);
+        ArrayList<Razon> razones = pagoService.obtenerRazonesAPagar(rut);
         model.addAttribute("razones", razones);
         model.addAttribute("rut", rut);
         return "registrar-pago-seleccionar-razones.html";
