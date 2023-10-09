@@ -27,7 +27,7 @@ public class Pago {
     @ManyToOne
     @JoinColumn(name="id_estudiante", nullable=false)
     @JsonIgnore
-    @JsonBackReference
+    @JsonBackReference(value = "estudiante_pagos")
     Estudiante estudiante;
     @ManyToMany
     @JoinTable(

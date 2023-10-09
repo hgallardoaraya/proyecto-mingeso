@@ -55,18 +55,18 @@ public class RazonService {
     @Transactional
     public void generarCuotas(String rut, Integer numCuotas){
         try{
-            Estudiante estudiante = estudianteRepository.findByRut(rut);
+            Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
 
             Integer totalMatricula = totalRazonRepository.findTotalByTipoRazon("MATRICULA");
             Integer totalArancel = totalRazonRepository.findTotalByTipoRazon("ARANCEL");
 
             //Descuento por pagar en cuotas es 0, pero podría cambiar.
-            Integer porcentajeDescuento = descuentoTipoPagoArancelRepository.findDescuentoByIdTipoPagoArancel(estudiante.getTipoPagoArancel().getId());
+            Integer porcentajeDescuento = descuentoTipoPagoArancelRepository.findDescuentoByIdTipoPagoArancel(estudiante.get().getTipoPagoArancel().getId());
 
             //Si paga en cuotas o al contado.
-            if(estudiante.getTipoPagoArancel().getId() == 0){
-                porcentajeDescuento += descuentoTipoColegioRepository.findDescuentoByIdTipoColegio(estudiante.getTipoColegio().getId());
-                porcentajeDescuento += descuentoAnioEgresoRepository.findDescuentoByAnioEgreso(estudiante.getAnioEgreso());
+            if(estudiante.get().getTipoPagoArancel().getId() == 0){
+                porcentajeDescuento += descuentoTipoColegioRepository.findDescuentoByIdTipoColegio(estudiante.get().getTipoColegio().getId());
+                porcentajeDescuento += descuentoAnioEgresoRepository.findDescuentoByAnioEgreso(estudiante.get().getAnioEgreso());
             }
 
             //Aplicar porcentaje descuentos
@@ -84,7 +84,7 @@ public class RazonService {
             EstadoRazon estadoPendiente = estadoRazonRepository.findById(1).get();
 
             // Matricula
-            Razon matricula = new Razon(0, totalMatricula, fechaInicioMatricula, fechaInicioClases, tipoMatricula, estadoPendiente, estudiante, false);
+            Razon matricula = new Razon(0, totalMatricula, fechaInicioMatricula, fechaInicioClases, tipoMatricula, estadoPendiente, estudiante.get(), false);
             razonRepository.save(matricula);
 
             //Generar cuotas arancel
@@ -95,7 +95,7 @@ public class RazonService {
 
             for(int i = 0; i < numCuotas; i++){
                 Integer numero = i + 1;
-                Razon arancel = new Razon(numero, cuota, fechaInicioArancel, fechaFinArancel, tipoArancel, estadoPendiente, estudiante, false);
+                Razon arancel = new Razon(numero, cuota, fechaInicioArancel, fechaFinArancel, tipoArancel, estadoPendiente, estudiante.get(), false);
                 razonRepository.save(arancel);
                 fechaInicioArancel = fechaInicioArancel.plusMonths(1);
                 fechaFinArancel = fechaFinArancel.plusMonths(1);

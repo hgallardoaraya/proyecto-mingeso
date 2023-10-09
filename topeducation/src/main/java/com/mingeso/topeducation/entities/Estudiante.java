@@ -41,28 +41,29 @@ public class Estudiante {
     String nombreColegio;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_colegio", referencedColumnName = "id")
-    @JsonManagedReference
+    @JsonManagedReference(value = "estudiante_tipoColegio")
+    @JsonIgnore
     TipoColegio tipoColegio;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_pago_arancel", referencedColumnName = "id")
-    @JsonManagedReference
+    @JsonManagedReference(value = "estudiante_tipoPagoArancel")
     @JsonIgnore
     TipoPagoArancel tipoPagoArancel;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_interes_meses_atraso", referencedColumnName = "id")
-//    @JsonManagedReference
+    @JsonManagedReference(value = "estudiante_interesMesesAtraso")
     @JsonIgnore
     InteresMesesAtraso interesMesesAtraso;
     @OneToMany(mappedBy="estudiante")
-//    @JsonManagedReference
+    @JsonManagedReference(value = "estudiante_razones")
     @JsonIgnore
     List<Razon> razones;
     @OneToMany(mappedBy="estudiante")
-//    @JsonManagedReference
+    @JsonManagedReference(value = "estudiante_examenes")
     @JsonIgnore
     List<Examen> examenes;
     @OneToMany(mappedBy="estudiante")
-//    @JsonManagedReference
+    @JsonManagedReference(value = "estudiante_pagos")
     @JsonIgnore
     List<Pago> pagos;
 }

@@ -39,7 +39,7 @@ public class Razon {
     EstadoRazon estado;
     @ManyToOne
     @JoinColumn(name="id_estudiante", nullable=false)
-    @JsonBackReference
+    @JsonBackReference(value = "estudiante_razones")
     Estudiante estudiante;
     @ManyToMany(mappedBy = "razones")
     @JsonBackReference

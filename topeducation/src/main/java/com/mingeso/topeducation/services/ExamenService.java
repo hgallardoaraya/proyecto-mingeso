@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,10 +49,10 @@ public class ExamenService {
             for(int i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) {
                 XSSFRow row = worksheet.getRow(i);
                 String rut = row.getCell(0).getStringCellValue();
-                Estudiante estudiante = estudianteRepository.findByRut(rut);
+                Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
                 Date fecha = row.getCell(1).getDateCellValue();
                 Integer puntaje = (int) row.getCell(2).getNumericCellValue();
-                examenRepository.save(new Examen(fecha, puntaje, estudiante, false));
+                examenRepository.save(new Examen(fecha, puntaje, estudiante.get(), false));
             }
         }catch(Exception e){
             throw new RuntimeException("Error " + e.getMessage());

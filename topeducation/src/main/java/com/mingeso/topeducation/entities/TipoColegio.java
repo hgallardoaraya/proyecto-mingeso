@@ -18,7 +18,7 @@ public class TipoColegio {
     @Column(name = "tipo")
     String tipo;
     @OneToOne(mappedBy = "tipoColegio")
-    @JsonBackReference
+    @JsonBackReference(value = "estudiante_tipoColegio")
     Estudiante estudiante;
     @OneToOne(mappedBy = "tipoColegio")
     MaxCuotasTipoColegio maxCuotasTipoColegio;

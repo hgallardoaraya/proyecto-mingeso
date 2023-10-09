@@ -26,4 +26,10 @@ public class Response {
         this.message = message;
         this.data = data;
     }
+
+    public Response(Integer status, String message){
+        this.status = status;
+        this.message = message;
+    }
+
 }

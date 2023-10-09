@@ -1,6 +1,7 @@
 package com.mingeso.topeducation.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class Examen {
     Boolean revision;
     @ManyToOne
     @JoinColumn(name="id_estudiante", nullable=false)
-    @JsonBackReference
+    @JsonBackReference(value = "estudiante_examenes")
     Estudiante estudiante;
 
     public Examen(Date fecha, Integer puntaje, Estudiante estudiante, Boolean revisado){

@@ -20,6 +20,6 @@ public class InteresMesesAtraso {
     @Column(name = "porcentaje_interes")
     Integer porcentajeInteres;
     @OneToOne(mappedBy = "interesMesesAtraso")
-    @JsonBackReference
+    @JsonBackReference(value = "estudiante_interesMesesAtraso")
     Estudiante estudiante;
 }

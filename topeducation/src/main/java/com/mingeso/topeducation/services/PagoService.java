@@ -1,6 +1,7 @@
 package com.mingeso.topeducation.services;
 
 import com.mingeso.topeducation.entities.*;
+import com.mingeso.topeducation.exceptions.EstudianteNoExisteException;
 import com.mingeso.topeducation.repositories.EstadoRazonRepository;
 import com.mingeso.topeducation.repositories.EstudianteRepository;
 import com.mingeso.topeducation.repositories.PagoRepository;
@@ -17,6 +18,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PagoService {
@@ -37,10 +39,10 @@ public class PagoService {
     public void registrarPago(RegistrarPagoRequest request) {
         try{
             Pago pago = new Pago();
-            Estudiante estudiante = estudianteRepository.findByRut(request.getRut());
-            pago.setEstudiante(estudiante);
-            if(estudiante == null) throw new RuntimeException("Error, el estudiante no existe.");
+            Optional<Estudiante> estudiante = estudianteRepository.findByRut(request.getRut());
+            if(estudiante.isEmpty()) throw new EstudianteNoExisteException("El estudiante con rut " + request.getRut() + " no existe.");
 
+            pago.setEstudiante(estudiante.get());
             // Obtén la fecha actual
             LocalDate fechaActual = LocalDate.now();
 
