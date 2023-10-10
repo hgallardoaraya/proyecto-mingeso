@@ -164,15 +164,12 @@ CREATE TABLE `estudiante` (
   `nombre_colegio` varchar(255) DEFAULT NULL,
   `id_tipo_colegio` int NOT NULL,
   `id_tipo_pago_arancel` int NOT NULL,
-  `id_interes_meses_atraso` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_tipo_colegio_estudiante_idx` (`id_tipo_colegio`),
   KEY `fk_tipo_pago_arancel_estudiante_idx` (`id_tipo_pago_arancel`),
-  KEY `fk_interes_meses_atraso_estudiante_idx` (`id_interes_meses_atraso`),
-  CONSTRAINT `estudiante_interes_meses_atraso_id_fk` FOREIGN KEY (`id_interes_meses_atraso`) REFERENCES `interes_meses_atraso` (`id`),
   CONSTRAINT `estudiante_tipo_colegio_id_fk` FOREIGN KEY (`id_tipo_colegio`) REFERENCES `tipo_colegio` (`id`),
   CONSTRAINT `estudiante_tipo_pago_arancel_id_fk` FOREIGN KEY (`id_tipo_pago_arancel`) REFERENCES `tipo_pago_arancel` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -181,7 +178,7 @@ CREATE TABLE `estudiante` (
 
 LOCK TABLES `estudiante` WRITE;
 /*!40000 ALTER TABLE `estudiante` DISABLE KEYS */;
-INSERT INTO `estudiante` VALUES (1,'Hector','Manuel','Gallardo','Araya','20.285.942-9','1999-10-27',2022,'Pedro de Valdivia',2,0,0),(2,'juan','ramon','perez','diaz','12.345.213-9','1999-10-09',2020,'santa margarita',0,0,0),(3,'Pedro','Juan','Diego','Gajardo','20.285.943-7','1999-09-27',2020,'San Ignacio',2,1,4),(4,'Pedro','Juan','Diego','Gajardo','20.285.943-7','1999-09-27',2020,'San Ignacio',2,1,4),(5,'Pedro','Juan','Diego','Gajardo','20.285.943-7','1999-09-27',2020,'San Ignacio',2,1,4);
+INSERT INTO `estudiante` VALUES (8,'Eugenio','Felipe','Vasquez','Concha','19.234.554-8','2000-06-13',2020,'Santa Isabel de Hungría',1,0),(9,'Juan','Ramon','Perez','Diaz','20.234.343-7','2000-10-09',2019,'Santa Margarita',2,0),(10,'Felipe','Edmundo','Rodriguez','Velasquez','18.544.321-5','1997-10-27',2016,'Colegio 1',0,0),(11,'Nombre 1','Nombre 2 ','Apellido 1','Apellido 2','12.345.234-2','1995-10-09',2015,'Colegio 2',1,0),(12,'Raimundo','Bastian','Castro','Silva','19.234.235-8','1998-10-09',2022,'Colegio 3',1,0);
 /*!40000 ALTER TABLE `estudiante` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -230,8 +227,9 @@ CREATE TABLE `examen` (
   `puntaje` int NOT NULL,
   `revision` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_estudiante_examen_idx` (`id_estudiante`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_estudiante_examen_idx` (`id_estudiante`),
+  CONSTRAINT `examen_estudiante_id_fk` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -240,7 +238,7 @@ CREATE TABLE `examen` (
 
 LOCK TABLES `examen` WRITE;
 /*!40000 ALTER TABLE `examen` DISABLE KEYS */;
-INSERT INTO `examen` VALUES (1,1,'2010-10-10',900,1),(2,2,'2010-10-10',850,1),(15,1,'2010-10-10',800,1),(16,1,'2010-10-10',850,1),(17,2,'2010-10-10',700,1),(18,2,'2010-10-10',0,1),(19,2,'2010-10-10',300,1),(20,2,'2010-10-10',0,1),(21,2,'2010-10-10',0,1),(22,1,'2010-10-10',0,1),(23,1,'2010-10-10',0,1);
+INSERT INTO `examen` VALUES (28,8,'2023-09-29',900,0),(29,9,'2023-09-29',860,0),(30,10,'2023-09-29',700,0),(31,11,'2023-09-29',800,0),(32,12,'2023-09-29',988,0);
 /*!40000 ALTER TABLE `examen` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -309,8 +307,9 @@ CREATE TABLE `pago` (
   `total` int NOT NULL,
   `fecha` date NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `pago_estudiante_id_fk` (`id_estudiante`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `pago_estudiante_id_fk` (`id_estudiante`),
+  CONSTRAINT `pago_estudiante_id_fk` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -319,7 +318,7 @@ CREATE TABLE `pago` (
 
 LOCK TABLES `pago` WRITE;
 /*!40000 ALTER TABLE `pago` DISABLE KEYS */;
-INSERT INTO `pago` VALUES (2,1,1345000,'2023-10-01'),(3,2,178000,'2023-10-01');
+INSERT INTO `pago` VALUES (4,8,70000,'2023-10-09'),(5,8,175714,'2023-10-09'),(6,8,175714,'2023-10-09'),(7,8,175714,'2023-10-09'),(8,8,175714,'2023-10-09');
 /*!40000 ALTER TABLE `pago` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -338,8 +337,8 @@ CREATE TABLE `pago_razon` (
   KEY `fk_pago_pago_razon_idx` (`id_pago`),
   KEY `pago_razon_razon_null_fk` (`id_razon`),
   CONSTRAINT `pago_razon_pago_null_fk` FOREIGN KEY (`id_pago`) REFERENCES `pago` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `pago_razon_razon_null_fk` FOREIGN KEY (`id_razon`) REFERENCES `razon` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `pago_razon_razon_null_fk` FOREIGN KEY (`id_razon`) REFERENCES `razon` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -348,7 +347,7 @@ CREATE TABLE `pago_razon` (
 
 LOCK TABLES `pago_razon` WRITE;
 /*!40000 ALTER TABLE `pago_razon` DISABLE KEYS */;
-INSERT INTO `pago_razon` VALUES (6,2,13),(7,2,14),(8,2,15),(9,2,16),(10,2,17),(11,3,18),(12,3,19);
+INSERT INTO `pago_razon` VALUES (13,4,86),(14,5,87),(15,6,88),(16,7,89),(17,8,90);
 /*!40000 ALTER TABLE `pago_razon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -368,14 +367,13 @@ CREATE TABLE `razon` (
   `fecha_inicio` date NOT NULL,
   `fecha_fin` date NOT NULL,
   `id_estudiante` int NOT NULL,
-  `calculo_planilla_realizado` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_tipo_razon_razon_idx` (`id_tipo_razon`),
   KEY `fk_estado_razon_razon_idx` (`id_estado_razon`) /*!80000 INVISIBLE */,
   KEY `fk_estudiante_razon_idx` (`id_estudiante`),
   CONSTRAINT `razon_estado_razon_id_fk` FOREIGN KEY (`id_estado_razon`) REFERENCES `estado_razon` (`id`),
   CONSTRAINT `razon_tipo_razon_id_fk` FOREIGN KEY (`id_tipo_razon`) REFERENCES `tipo_razon` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -384,7 +382,7 @@ CREATE TABLE `razon` (
 
 LOCK TABLES `razon` WRITE;
 /*!40000 ALTER TABLE `razon` DISABLE KEYS */;
-INSERT INTO `razon` VALUES (13,0,0,70000,0,'2023-02-24','2023-03-01',1,1),(14,1,1,318750,0,'2023-03-05','2023-03-10',1,1),(15,1,2,318750,0,'2023-04-05','2023-04-10',1,1),(16,1,3,318750,0,'2023-05-05','2023-05-10',1,1),(17,1,4,318750,0,'2023-06-05','2023-06-10',1,1),(18,0,0,70000,0,'2023-02-24','2023-03-01',2,1),(19,1,1,108000,0,'2023-03-05','2023-03-10',2,1),(20,1,2,1158945,2,'2023-04-05','2023-04-10',2,1),(21,1,3,1158945,2,'2023-05-05','2023-05-10',2,1),(22,1,4,1158945,2,'2023-06-05','2023-06-10',2,1),(23,1,5,1158945,2,'2023-07-05','2023-07-10',2,1),(24,1,6,1158945,2,'2023-08-05','2023-08-10',2,1),(25,1,7,1158945,2,'2023-09-05','2023-09-10',2,1),(26,1,8,1158945,1,'2023-10-05','2023-10-10',2,1),(27,1,9,1158945,1,'2023-11-05','2023-11-10',2,1),(28,1,10,1158945,1,'2023-12-05','2023-12-10',2,1);
+INSERT INTO `razon` VALUES (86,0,0,70000,0,'2023-02-24','2023-03-01',8),(87,1,1,175714,0,'2023-04-05','2023-04-10',8),(88,1,2,175714,0,'2023-05-05','2023-05-10',8),(89,1,3,175714,0,'2023-06-05','2023-06-10',8),(90,1,4,175714,0,'2023-07-05','2023-07-10',8),(91,1,5,209109,2,'2023-08-05','2023-08-10',8),(92,1,6,209109,2,'2023-09-05','2023-09-10',8),(93,1,7,209109,2,'2023-10-05','2023-10-10',8),(94,0,0,70000,1,'2023-02-24','2023-03-01',9),(95,1,1,629642,2,'2023-04-05','2023-04-10',9),(96,1,2,629642,2,'2023-05-05','2023-05-10',9),(97,1,3,629642,2,'2023-06-05','2023-06-10',9),(98,1,4,629642,2,'2023-07-05','2023-07-10',9),(99,0,0,70000,1,'2023-02-24','2023-03-01',10),(100,1,1,249769,2,'2023-04-05','2023-04-10',10),(101,1,2,249769,2,'2023-05-05','2023-05-10',10),(102,1,3,249769,2,'2023-06-05','2023-06-10',10),(103,1,4,249769,2,'2023-07-05','2023-07-10',10),(104,1,5,249769,2,'2023-08-05','2023-08-10',10),(105,1,6,249769,2,'2023-09-05','2023-09-10',10),(106,1,7,249769,2,'2023-10-05','2023-10-10',10),(107,1,8,249769,1,'2023-11-05','2023-11-10',10),(108,1,9,249769,1,'2023-12-05','2023-12-10',10),(109,1,10,249769,1,'2024-01-05','2024-01-10',10),(110,0,0,70000,1,'2023-02-24','2023-03-01',11),(111,1,1,514731,2,'2023-04-05','2023-04-10',11),(112,1,2,514731,2,'2023-05-05','2023-05-10',11),(113,1,3,514731,2,'2023-06-05','2023-06-10',11),(114,1,4,514731,2,'2023-07-05','2023-07-10',11),(115,1,5,514731,2,'2023-08-05','2023-08-10',11),(116,0,0,70000,1,'2023-02-24','2023-03-01',12),(117,1,1,743906,2,'2023-04-05','2023-04-10',12),(118,1,2,743906,2,'2023-05-05','2023-05-10',12);
 /*!40000 ALTER TABLE `razon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -522,4 +520,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-09 14:25:34
+-- Dump completed on 2023-10-10  0:25:12
