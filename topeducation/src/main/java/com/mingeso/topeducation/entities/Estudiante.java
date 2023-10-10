@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -28,7 +29,7 @@ public class Estudiante {
     @Column(name = "apellido2")
     String apellido2;
     @Column(name = "fecha_nacimiento")
-    Date fechaNacimiento;
+    LocalDate fechaNacimiento;
     @Column(name = "anio_egreso")
     Integer anioEgreso;
     @Column(name = "nombre_colegio")

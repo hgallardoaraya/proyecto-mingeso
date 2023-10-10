@@ -4,7 +4,6 @@ import com.mingeso.topeducation.entities.Estudiante;
 import com.mingeso.topeducation.requests.IngresarEstudianteRequest;
 import com.mingeso.topeducation.responses.Response;
 import com.mingeso.topeducation.services.EstudianteService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +50,7 @@ public class EstudianteController {
 
     @GetMapping("/maxcuotas")
     public ResponseEntity<?> getMaxCuotasByRut(@RequestParam("rut") String rut){
-        Integer maxCuotas = estudianteService.getMaxCuotasByRut(rut);
+        Integer maxCuotas = estudianteService.obtenerMaxCuotas(rut);
         Map<String, Integer> data = new HashMap<>();
         data.put("maxCuotas", maxCuotas);
         return new ResponseEntity<Response>(

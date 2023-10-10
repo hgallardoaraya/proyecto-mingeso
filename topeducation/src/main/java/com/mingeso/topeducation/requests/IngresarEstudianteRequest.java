@@ -11,5 +11,4 @@ public class IngresarEstudianteRequest {
     Estudiante estudiante;
     int idTipoColegio;
     int idTipoPagoArancel;
-    int idInteresMesesAtraso;
 }
