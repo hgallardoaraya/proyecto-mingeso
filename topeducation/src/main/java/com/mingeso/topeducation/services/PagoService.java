@@ -1,7 +1,7 @@
 package com.mingeso.topeducation.services;
 
 import com.mingeso.topeducation.entities.*;
-import com.mingeso.topeducation.exceptions.EstudianteNoExisteException;
+import com.mingeso.topeducation.exceptions.RegistroNoExisteException;
 import com.mingeso.topeducation.repositories.EstadoRazonRepository;
 import com.mingeso.topeducation.repositories.EstudianteRepository;
 import com.mingeso.topeducation.repositories.PagoRepository;
@@ -10,14 +10,11 @@ import com.mingeso.topeducation.requests.RegistrarPagoRequest;
 import com.mingeso.topeducation.utils.EntradaReporteResumen;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -37,38 +34,39 @@ public class PagoService {
     //Existe un pago que contiene todas las razones que se desean pagar.
     @Transactional
     public void registrarPago(RegistrarPagoRequest request) {
-        try{
-            Pago pago = new Pago();
-            Optional<Estudiante> estudiante = estudianteRepository.findByRut(request.getRut());
-            if(estudiante.isEmpty()) throw new EstudianteNoExisteException("El estudiante con rut " + request.getRut() + " no existe.");
+        Pago pago = new Pago();
 
-            pago.setEstudiante(estudiante.get());
-            // Obtén la fecha actual
-            LocalDate fechaActual = LocalDate.now();
+        Optional<Estudiante> estudiante = estudianteRepository.findByRut(request.getRut());
+        if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante con rut " + request.getRut() + " no existe.");
+        pago.setEstudiante(estudiante.get());
 
-            List<Razon> razones = new ArrayList<>();
-            Integer total = 0;
-            for(Integer idRazon : request.getIdsRazones()){
-                Razon razon = razonRepository.findById(idRazon).get();
-                //estado "PAGADA"
-                EstadoRazon estadoRazon = estadoRazonRepository.findById(0).get();
-                razon.setEstado(estadoRazon);
-                razones.add(razon);
-                razonRepository.save(razon);
-                total += razon.getMonto();
-            }
-            if(razones == null) throw new RuntimeException("Error no se indicaron o no existen razones.");
-            pago.setRazones(razones);
-            pago.setTotal(total);
-            pago.setFecha(LocalDate.now());
-            pagoRepository.save(pago);
-        }catch(Exception e){
-            throw new RuntimeException("Error " + e.getMessage());
+        // Obtén la fecha actual
+        LocalDate fechaActual = LocalDate.now();
+
+        List<Razon> razones = new ArrayList<>();
+        Integer total = 0;
+        for(Integer idRazon : request.getIdsRazones()){
+            Optional<Razon> razon = razonRepository.findById(idRazon);
+            if(razon.isEmpty()) throw new RegistroNoExisteException("No existe la razon con id " + idRazon + ".");
+            //estado "PAGADA"
+            Optional<EstadoRazon> estadoRazon = estadoRazonRepository.findById(0);
+            if(estadoRazon.isEmpty()) throw new RegistroNoExisteException("Error al obtener el estado de id 0.");
+            razon.get().setEstado(estadoRazon.get());
+            razones.add(razon.get());
+            razonRepository.save(razon.get());
+            total += razon.get().getMonto();
         }
+        if(razones.isEmpty()) throw new RegistroNoExisteException("No se indicaron o no existen razones.");
+
+        pago.setRazones(razones);
+        pago.setTotal(total);
+        pago.setFecha(LocalDate.now());
+
+        pagoRepository.save(pago);
     }
 
     public ArrayList<Razon> obtenerRazonesAPagar(String rut) {
-        return razonRepository.findAllPendientesByRut(rut);
+        return razonRepository.findCuotaProcesoAndAtrasadasByRut(rut);
     }
 
     /*▪ RUT estudiante <Listo>
@@ -87,6 +85,7 @@ public class PagoService {
         try{
             List<EntradaReporteResumen> reporte = new ArrayList<>();
             List<Estudiante> estudiantes = estudianteRepository.findAll();
+            if(estudiantes.isEmpty()) throw new RegistroNoExisteException("No existen estudiantes registrados.");
             for(Estudiante estudiante : estudiantes){
                 List<Razon> razones = estudiante.getRazones();
                 List<Pago> pagos = estudiante.getPagos();
@@ -115,9 +114,9 @@ public class PagoService {
         }
     }
 
-    private Integer calcularNumeroCuotasAtrasadas(List<Razon> razones){
-        Integer numeroCuotasAtrasadas = 0;
-        Integer anioActual = LocalDate.now().getYear();
+    private int calcularNumeroCuotasAtrasadas(List<Razon> razones){
+        int numeroCuotasAtrasadas = 0;
+        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             //También se elimina restricción de año
             if((razon.getTipo().getId() == 1)
@@ -128,9 +127,9 @@ public class PagoService {
         return numeroCuotasAtrasadas;
     }
 
-    private Integer calcularTotalPendiente(List<Razon> razones){
-        Integer totalPendiente = 0;
-        Integer anioActual = LocalDate.now().getYear();
+    private int calcularTotalPendiente(List<Razon> razones){
+        int totalPendiente = 0;
+        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             //Acá no hay restricción de año ya que puede ser un arancel con interes acumulado de años con una deuda millonaria :p.
             if(((razon.getEstado().getId() == 1) || (razon.getEstado().getId() == 2))){
@@ -140,9 +139,9 @@ public class PagoService {
         return totalPendiente;
     }
 
-    private Integer calcularArancelPendiente(List<Razon> razones){
-        Integer arancelPendiente = 0;
-        Integer anioActual = LocalDate.now().getYear();
+    private int calcularArancelPendiente(List<Razon> razones){
+        int arancelPendiente = 0;
+        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             //Acá no hay restricción de año ya que puede ser un arancel con interes acumulado de años con una deuda millonaria :p.
             if((razon.getTipo().getId() == 1)
@@ -164,9 +163,9 @@ public class PagoService {
         return fechaUltimoPago;
     }
 
-    private Integer calcularTotalPagado(List<Razon> razones){
-        Integer totalPagado = 0;
-        Integer anioActual = LocalDate.now().getYear();
+    private int calcularTotalPagado(List<Razon> razones){
+        int totalPagado = 0;
+        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             if((razon.getFechaInicio().getYear() == anioActual)
                     && (razon.getEstado().getId() == 0)){
@@ -176,9 +175,9 @@ public class PagoService {
         return totalPagado;
     }
 
-    private Integer calcularArancelPagado(List<Razon> razones){
-        Integer arancelPagado = 0;
-        Integer anioActual = LocalDate.now().getYear();
+    private int calcularArancelPagado(List<Razon> razones){
+        int arancelPagado = 0;
+        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             if((razon.getTipo().getId() == 1)
                     && (razon.getFechaInicio().getYear() == anioActual)
@@ -189,9 +188,9 @@ public class PagoService {
         return arancelPagado;
     }
 
-    private Integer calcularNumeroCuotasPagadas(List<Razon> razones){
-        Integer numeroCuotasPagadas = 0;
-        Integer anioActual = LocalDate.now().getYear();
+    private int calcularNumeroCuotasPagadas(List<Razon> razones){
+        int numeroCuotasPagadas = 0;
+        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             if((razon.getTipo().getId() == 1)
                     && (razon.getFechaInicio().getYear() == anioActual)
@@ -202,9 +201,9 @@ public class PagoService {
         return numeroCuotasPagadas;
     }
 
-    private Integer calcularNumeroCuotasPactadas(List<Razon> razones){
-        Integer numeroCuotasPactadas = 0;
-        Integer anioActual = LocalDate.now().getYear();
+    private int calcularNumeroCuotasPactadas(List<Razon> razones){
+        int numeroCuotasPactadas = 0;
+        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             if((razon.getTipo().getId() == 1) && (razon.getFechaInicio().getYear() == anioActual)){
                 numeroCuotasPactadas += 1;
@@ -213,9 +212,9 @@ public class PagoService {
         return numeroCuotasPactadas;
     }
 
-    private Integer calcularTotalArancel(List<Razon> razones){
-        Integer totalArancel = 0;
-        Integer anioActual = LocalDate.now().getYear();
+    private int calcularTotalArancel(List<Razon> razones){
+        int totalArancel = 0;
+        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             //Si es arancel calcular total
             if((razon.getTipo().getId() == 1) && (razon.getFechaInicio().getYear() == anioActual)){
@@ -225,8 +224,8 @@ public class PagoService {
         return totalArancel;
     }
 
-    private Integer calcularPromedioExamenes(List<Examen> examenes){
-        Integer promedioExamenes = 0;
+    private int calcularPromedioExamenes(List<Examen> examenes){
+        int promedioExamenes = 0;
         for(Examen examen : examenes){
             promedioExamenes += examen.getPuntaje();
         }

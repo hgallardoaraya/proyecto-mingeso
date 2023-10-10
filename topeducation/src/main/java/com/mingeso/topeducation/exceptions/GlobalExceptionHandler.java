@@ -8,27 +8,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler{
-    @ExceptionHandler(EstudianteNoExisteException.class)
-    public ResponseEntity<Response> handleEstudianteNoExisteException(EstudianteNoExisteException ex){
+    @ExceptionHandler(RegistroNoExisteException.class)
+    public ResponseEntity<Response> handleRegistroNoExisteException(RegistroNoExisteException ex){
         Response response = new Response(HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(TipoColegioNoExisteException.class)
-    public ResponseEntity<Response> handleTipoColegioNoExisteException(TipoColegioNoExisteException ex){
-        Response response = new Response(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(FechaNoPermitidaException.class)
+    public ResponseEntity<Response> handleFechaNoPermitidadException(FechaNoPermitidaException ex){
+        Response response = new Response(HttpStatus.FORBIDDEN.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(TipoPagoArancelNoExisteException.class)
-    public ResponseEntity<Response> handleTipoPagoArancelNoExisteException(TipoPagoArancelNoExisteException ex){
-        Response response = new Response(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    @ExceptionHandler(ValorFueraDeRangoException.class)
+    public ResponseEntity<Response> handleValorFueraDeRangoException(ValorFueraDeRangoException ex){
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InteresMesesAtrasoNoExisteException.class)
-    public ResponseEntity<Response> handleInteresMesesAtrasoNoExisteException(InteresMesesAtrasoNoExisteException ex){
-        Response response = new Response(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
 }

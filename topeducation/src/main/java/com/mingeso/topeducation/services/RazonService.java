@@ -1,10 +1,11 @@
 package com.mingeso.topeducation.services;
 
 import com.mingeso.topeducation.entities.*;
+import com.mingeso.topeducation.exceptions.RegistroNoExisteException;
+import com.mingeso.topeducation.exceptions.ValorFueraDeRangoException;
 import com.mingeso.topeducation.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ public class RazonService {
     DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository;
     ExamenRepository examenRepository;
     InteresMesesAtrasoRepository interesMesesAtrasoRepository;
+    MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
 
     @Autowired
     RazonService(RazonRepository razonRepository,
@@ -37,7 +39,8 @@ public class RazonService {
                  DescuentoAnioEgresoRepository descuentoAnioEgresoRepository,
                  DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository,
                  InteresMesesAtrasoRepository interesMesesAtrasoRepository,
-                 ExamenRepository examenRepository
+                 ExamenRepository examenRepository,
+                 MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository
                  ){
         this.razonRepository = razonRepository;
         this.tipoRazonRepository = tipoRazonRepository;
@@ -50,59 +53,61 @@ public class RazonService {
         this.descuentoPuntajePruebaRepository = descuentoPuntajePruebaRepository;
         this.examenRepository = examenRepository;
         this.interesMesesAtrasoRepository = interesMesesAtrasoRepository;
+        this.maxCuotasTipoColegioRepository = maxCuotasTipoColegioRepository;
     }
 
     @Transactional
     public void generarCuotas(String rut, Integer numCuotas){
-        try{
-            Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
 
-            Integer totalMatricula = totalRazonRepository.findTotalByTipoRazon("MATRICULA");
-            Integer totalArancel = totalRazonRepository.findTotalByTipoRazon("ARANCEL");
+        Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
 
-            //Descuento por pagar en cuotas es 0, pero podría cambiar.
-            Integer porcentajeDescuento = descuentoTipoPagoArancelRepository.findDescuentoByIdTipoPagoArancel(estudiante.get().getTipoPagoArancel().getId());
+        if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante con rut " + rut + " no existe.");
+        if(numCuotas < 0) throw new ValorFueraDeRangoException("El número de cuotas es menor a 0.");
+        if(numCuotas > maxCuotasTipoColegioRepository.findMaxCuotasByTipoColegio(estudiante.get().getTipoColegio().getId())) throw new ValorFueraDeRangoException("El número de cuotas excede el máximo.");
 
-            //Si paga en cuotas o al contado.
-            if(estudiante.get().getTipoPagoArancel().getId() == 0){
-                porcentajeDescuento += descuentoTipoColegioRepository.findDescuentoByIdTipoColegio(estudiante.get().getTipoColegio().getId());
-                porcentajeDescuento += descuentoAnioEgresoRepository.findDescuentoByAnioEgreso(estudiante.get().getAnioEgreso());
-            }
+        Integer totalMatricula = totalRazonRepository.findTotalByTipoRazon("MATRICULA");
+        Integer totalArancel = totalRazonRepository.findTotalByTipoRazon("ARANCEL");
 
-            //Aplicar porcentaje descuentos
-            totalArancel = totalArancel - ((totalArancel * porcentajeDescuento) / 100);
+        //Descuento por pagar en cuotas es 0, pero podría cambiar.
+        Integer porcentajeDescuento = descuentoTipoPagoArancelRepository.findDescuentoByIdTipoPagoArancel(estudiante.get().getTipoPagoArancel().getId());
 
-            // Obtén la fecha actual
-            LocalDate fechaActual = LocalDate.now();
+        //Si paga en cuotas
+        if(estudiante.get().getTipoPagoArancel().getId() == 0){
+            porcentajeDescuento += descuentoTipoColegioRepository.findDescuentoByIdTipoColegio(estudiante.get().getTipoColegio().getId());
+            porcentajeDescuento += descuentoAnioEgresoRepository.findDescuentoByAnioEgreso(estudiante.get().getAnioEgreso());
+        }
 
-            //cambiar esto a variable en bdd
-            LocalDate fechaInicioClases = LocalDate.of(fechaActual.getYear(), Month.MARCH, 1);
-            LocalDate fechaInicioMatricula = fechaInicioClases.minusDays(5);
+        //Aplicar porcentaje descuentos
+        totalArancel = totalArancel - ((totalArancel * porcentajeDescuento) / 100);
+
+        // Obtén la fecha actual
+        LocalDate fechaActual = LocalDate.now();
+
+        //cambiar esto a variable en bdd
+        LocalDate fechaInicioClases = LocalDate.of(fechaActual.getYear(), Month.MARCH, 1);
+        LocalDate fechaInicioMatricula = fechaInicioClases.minusDays(5);
 
 
-            TipoRazon tipoMatricula = tipoRazonRepository.findById(0).get();
-            EstadoRazon estadoPendiente = estadoRazonRepository.findById(1).get();
+        TipoRazon tipoMatricula = tipoRazonRepository.findById(0).get();
+        EstadoRazon estadoPendiente = estadoRazonRepository.findById(1).get();
 
-            // Matricula
-            Razon matricula = new Razon(0, totalMatricula, fechaInicioMatricula, fechaInicioClases, tipoMatricula, estadoPendiente, estudiante.get(), false);
-            razonRepository.save(matricula);
+        // Matricula
+        Razon matricula = new Razon(0, totalMatricula, fechaInicioMatricula, fechaInicioClases, tipoMatricula, estadoPendiente, estudiante.get());
+        razonRepository.save(matricula);
 
-            //Generar cuotas arancel
-            LocalDate fechaInicioArancel = LocalDate.of(fechaActual.getYear(), Month.MARCH, 5);
-            LocalDate fechaFinArancel = LocalDate.of(fechaActual.getYear(), Month.MARCH, 10);
-            Integer cuota = totalArancel / numCuotas;
-            TipoRazon tipoArancel = tipoRazonRepository.findById(1).get();
+        //Generar cuotas arancel
+        LocalDate fechaInicioArancel = LocalDate.of(fechaInicioClases.getYear(), fechaInicioClases.getMonth().plus(1), 5);
+        LocalDate fechaFinArancel = LocalDate.of(fechaInicioClases.getYear(), fechaInicioClases.getMonth().plus(1), 10);
 
-            for(int i = 0; i < numCuotas; i++){
-                Integer numero = i + 1;
-                Razon arancel = new Razon(numero, cuota, fechaInicioArancel, fechaFinArancel, tipoArancel, estadoPendiente, estudiante.get(), false);
-                razonRepository.save(arancel);
-                fechaInicioArancel = fechaInicioArancel.plusMonths(1);
-                fechaFinArancel = fechaFinArancel.plusMonths(1);
-            }
+        Integer cuota = totalArancel / numCuotas;
+        TipoRazon tipoArancel = tipoRazonRepository.findById(1).get();
 
-        }catch(Exception e){
-            throw new RuntimeException("Error " + e.getMessage());
+        for(int i = 0; i < numCuotas; i++){
+            Integer numero = i + 1;
+            Razon arancel = new Razon(numero, cuota, fechaInicioArancel, fechaFinArancel, tipoArancel, estadoPendiente, estudiante.get());
+            razonRepository.save(arancel);
+            fechaInicioArancel = fechaInicioArancel.plusMonths(1);
+            fechaFinArancel = fechaFinArancel.plusMonths(1);
         }
     }
 
@@ -112,79 +117,113 @@ public class RazonService {
 
     @Transactional
     public void calcularPlanilla(){
-        try{
-            List<Examen> examenes = examenRepository.findAllSinRevision();
 
-            Map<String, List<Integer>> rutPuntajes = new HashMap<>();
+        List<Examen> examenes = examenRepository.findAllSinRevision();
 
-            //aplicar descuentos examenes
-            for(Examen examen : examenes){
-                if(rutPuntajes.containsKey(examen.getEstudiante().getRut())){
-                    rutPuntajes.get(examen.getEstudiante().getRut()).add(examen.getPuntaje());
-                }else{
-                    List<Integer> nuevaListaPuntajes = new ArrayList<>();
-                    nuevaListaPuntajes.add(examen.getPuntaje());
-                    rutPuntajes.put(examen.getEstudiante().getRut(), nuevaListaPuntajes);
-                }
-                //actualizar estado de revision del examen
-                examen.setRevision(true);
-                examenRepository.save(examen);
+        Map<String, List<Integer>> rutPuntajes = obtenerPuntajesPorRut(examenes);
+
+        actualizarRevisionExamenes(examenes);
+
+        aplicarDescuentosPorPuntajes(rutPuntajes);
+
+        aplicarInteresesPorMesesAtraso();
+
+    }
+
+    public Map<String, List<Integer>> obtenerPuntajesPorRut(List<Examen> examenes){
+        Map<String, List<Integer>> rutPuntajes = new HashMap<>();
+
+        for(Examen examen : examenes){
+            if(rutPuntajes.containsKey(examen.getEstudiante().getRut())){
+                rutPuntajes.get(examen.getEstudiante().getRut()).add(examen.getPuntaje());
+            }else{
+                List<Integer> nuevaListaPuntajes = new ArrayList<>();
+                nuevaListaPuntajes.add(examen.getPuntaje());
+                rutPuntajes.put(examen.getEstudiante().getRut(), nuevaListaPuntajes);
             }
+        }
+        return rutPuntajes;
+    }
 
-            for(String rut : rutPuntajes.keySet()){
-                Integer total = rutPuntajes.get(rut).stream().reduce(0, Integer::sum);
-                Integer promedio = total/rutPuntajes.get(rut).size();
-                Integer porcentajeDescuento = descuentoPuntajePruebaRepository.findDescuentoByPuntaje(promedio);
-                List<Razon> cuotasArancel = razonRepository.findAllPendientesByRut(rut);
-                for(Razon cuota : cuotasArancel){
-                    //aplicar descuento
-                    cuota.setMonto(cuota.getMonto() - ((cuota.getMonto() * porcentajeDescuento) / 100));
-                    razonRepository.save(cuota);
-                }
-            }
+    public void aplicarInteresesPorMesesAtraso(){
+        LocalDate fechaInicioProceso = obtenerFechaInicioProceso();
+        List<Estudiante> estudiantes = estudianteRepository.findAll();
+        for(Estudiante estudiante : estudiantes){
+            //obtener razones que sean de tipo arancel, estén pendientes o atrasadas y que sean anteriores a la fecha del proceso.
+            List<Razon> cuotasArancelPendientesOAtrasadas = estudiante.getRazones().stream().filter(razon ->
+                    (razon.getTipo().getId().equals(1))
+                            && (razon.getEstado().getId().equals(1) || razon.getEstado().getId().equals(2))
+            ).toList();
 
-            //Crear intereses
-            List<Razon> cuotasArancel = razonRepository.findAllPendientes();
-            LocalDate fechaActual = LocalDate.now();
-            Razon cuotaProceso = razonRepository.findCuotaProceso(fechaActual);
-            LocalDate fechaFinProceso = cuotaProceso.getFechaFin();
+            List<Razon> cuotasArancelAntiguasPendientesOAtrasadas = cuotasArancelPendientesOAtrasadas.stream().filter(razon ->
+                    (razon.getFechaFin().isBefore(fechaInicioProceso))
+            ).toList();
 
-            if(cuotaProceso.getCalculoPlanillaRealizado()){
-                throw new Exception("El cálculo de planilla ya fue realizado para el próximo proceso en marcha en la fecha "
-                + fechaFinProceso);
-            }
+            List<Integer> porcentajesInteres = obtenerPorcentajesInteres(cuotasArancelAntiguasPendientesOAtrasadas, fechaInicioProceso);
 
-            List<Integer> porcentajesInteres = new ArrayList<>();
-
-            for(Razon cuota : cuotasArancel){
-                if(cuota.getFechaFin().isBefore(fechaFinProceso)){
-                    //si es anterior al proceso actual y está pendiente, pasa a atrasada
-                    if(cuota.getEstado().getId() == 1){
-                        EstadoRazon estadoCuotaAtrasada = estadoRazonRepository.findById(2).get();
-                        cuota.setEstado(estadoCuotaAtrasada);
-                        razonRepository.save(cuota);
-                    }
-
-                    //si está atrasada, se calcula su interes
-                    if(cuota.getEstado().getId() == 2){
-                        Period periodo = Period.between(cuota.getFechaFin(), fechaFinProceso);
-                        int mesesAtraso = periodo.getYears() * 12 + periodo.getMonths();
-                        Integer porcentajeInteres = interesMesesAtrasoRepository.findInteresByMesesAtraso(mesesAtraso);
-                        porcentajesInteres.add(porcentajeInteres);
-                    }
-                }
-            }
-
-            //se aplican los intereses
-            for(Razon cuota : cuotasArancel){
+//            se aplican los intereses
+            for(Razon cuota : cuotasArancelPendientesOAtrasadas){
                 for(Integer porcentajeInteres : porcentajesInteres){
                     cuota.setMonto(cuota.getMonto() + ((cuota.getMonto() * porcentajeInteres) / 100));
-                    cuota.setCalculoPlanillaRealizado(true);
-                    razonRepository.save(cuota);
                 }
+                razonRepository.save(cuota);
             }
-        }catch(Exception e){
-            throw new RuntimeException("Error: " + e.getMessage());
         }
+
+
+    }
+
+    public void actualizarRevisionExamenes(List<Examen> examenes){
+        for(Examen examen : examenes){
+            examen.setRevision(true);
+            examenRepository.save(examen);
+        }
+    }
+
+    public void aplicarDescuentosPorPuntajes(Map<String, List<Integer>> rutPuntajes){
+        for(String rut : rutPuntajes.keySet()){
+            //Calcular total
+            Integer total = rutPuntajes.get(rut).stream().reduce(0, Integer::sum);
+            //Calcular promedio
+            Integer promedio = total/rutPuntajes.get(rut).size();
+            Integer porcentajeDescuento = descuentoPuntajePruebaRepository.findDescuentoByPuntaje(promedio);
+            List<Razon> cuotasArancel = razonRepository.findCuotaProcesoAndAtrasadasByRut(rut);
+            for(Razon cuota : cuotasArancel){
+                //aplicar descuento
+                cuota.setMonto(cuota.getMonto() - ((cuota.getMonto() * porcentajeDescuento) / 100));
+                razonRepository.save(cuota);
+            }
+        }
+    }
+
+    public LocalDate obtenerFechaInicioProceso(){
+        LocalDate fechaActual = LocalDate.now();
+        LocalDate fechaInicioProceso;
+        if(fechaActual.getDayOfMonth() < 10){
+            fechaInicioProceso = LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 5);
+        }else{
+            fechaInicioProceso = LocalDate.of(fechaActual.getYear(), fechaActual.getMonth().plus(1), 5);
+        }
+        return fechaInicioProceso;
+    }
+
+    public List<Integer> obtenerPorcentajesInteres(List<Razon> cuotasArancelAntiguasPendientesOAtrasadas, LocalDate fechaInicioProceso){
+        List<Integer> porcentajesInteres = new ArrayList<>();
+
+        for(Razon cuota : cuotasArancelAntiguasPendientesOAtrasadas){
+            //Si está pendiente, pasa a atrasada
+            if(cuota.getEstado().getId() == 1){
+                EstadoRazon estadoCuotaAtrasada = estadoRazonRepository.findById(2).get();
+                cuota.setEstado(estadoCuotaAtrasada);
+                razonRepository.save(cuota);
+            }
+
+            Period periodo = Period.between(cuota.getFechaInicio(), fechaInicioProceso);
+            int mesesAtraso = periodo.getYears() * 12 + periodo.getMonths();
+            Integer porcentajeInteres = interesMesesAtrasoRepository.findInteresByMesesAtraso(mesesAtraso);
+            porcentajesInteres.add(porcentajeInteres);
+        }
+
+        return porcentajesInteres;
     }
 }

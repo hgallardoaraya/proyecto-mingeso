@@ -1,9 +1,11 @@
 package com.mingeso.topeducation.controllers;
 
+import com.mingeso.topeducation.entities.Estudiante;
 import com.mingeso.topeducation.requests.IngresarEstudianteRequest;
 import com.mingeso.topeducation.responses.Response;
 import com.mingeso.topeducation.services.EstudianteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,9 +16,14 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/estudiantes")
-@RequiredArgsConstructor
 public class EstudianteController {
     private final EstudianteService estudianteService;
+
+    @Autowired
+    public EstudianteController(EstudianteService estudianteService){
+        this.estudianteService = estudianteService;
+    }
+
     @GetMapping("/ingresar")
     public String ingresar(){
         return "ingresar-estudiante.html";
@@ -29,12 +36,31 @@ public class EstudianteController {
 
     @PostMapping
     public ResponseEntity<Response> ingresarEstudiante(@RequestBody IngresarEstudianteRequest request) {
-        return estudianteService.ingresarEstudiante(request);
+        Estudiante estudiante = estudianteService.ingresarEstudiante(request);
+        Map<String, Estudiante> data = new HashMap<>();
+        data.put("estudiante", estudiante);
+        return new ResponseEntity<>(
+            new Response(
+                HttpStatus.CREATED.value(),
+                "Estudiante ingresado correctamente.",
+                "/estudiantes/exito",
+                data
+            ),
+            HttpStatus.CREATED);
     }
 
     @GetMapping("/maxcuotas")
     public ResponseEntity<?> getMaxCuotasByRut(@RequestParam("rut") String rut){
-        return estudianteService.getMaxCuotasByRut(rut);
+        Integer maxCuotas = estudianteService.getMaxCuotasByRut(rut);
+        Map<String, Integer> data = new HashMap<>();
+        data.put("maxCuotas", maxCuotas);
+        return new ResponseEntity<Response>(
+            new Response(
+                HttpStatus.FOUND.value(),
+                "Número máximo de cuotas encontrado con éxito.",
+                data
+            ),
+            HttpStatus.FOUND);
     }
 
 }

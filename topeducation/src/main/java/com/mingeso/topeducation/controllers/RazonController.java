@@ -4,6 +4,7 @@ import com.mingeso.topeducation.entities.Razon;
 import com.mingeso.topeducation.responses.Response;
 import com.mingeso.topeducation.services.RazonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,9 +20,13 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/razones")
-@RequiredArgsConstructor
 public class RazonController {
     private final RazonService razonService;
+
+    @Autowired
+    public RazonController(RazonService razonService){
+        this.razonService = razonService;
+    }
 
     @GetMapping
     public String listarRazones(@RequestParam String rut, Model model) {
@@ -48,6 +53,7 @@ public class RazonController {
     public String vistaCalcularPlanilla(){
         return "calcular-planilla";
     }
+
     @PostMapping("/planilla")
     public String calcularPlanilla(){
         razonService.calcularPlanilla();
