@@ -20,7 +20,8 @@
                     <th>Pagar</th>
                 </tr>
             </thead>
-            <tbody th:text="${#lists.size(razones) > 1} ? '' :g 'No existen razones de pago pendientes ni atrasadas.'">
+            <span th:text="${#lists.size(razones) > 1} ? '' : 'No existen razones de pago pendientes ni atrasadas.'"></span>
+            <tbody>
                 <tr th:each="razon:${razones}">
                     <td th:text="${razon.numero}"></td>
                     <td th:text="${razon.tipo.tipo}"></td>
@@ -51,7 +52,6 @@
         const idsRazones = [];
         checkedBoxes.forEach(razonInput => idsRazones.push(razonInput.value));
         if(!idsRazones.length > 0) return 0;
-        console.log(idsRazones);
         const data = {rut, idsRazones};
         const response = await fetch("http://localhost:3000/pagos/registrar", {
             method: 'POST',
@@ -61,7 +61,10 @@
             body: JSON.stringify(data)
         })
         const rawResponse = await response.json();
-        console.log(rawResponse);
+        alert(rawResponse.message);
+        if(rawResponse.status === 201){
+            window.location.replace(rawResponse.pathRedirect);
+        }
     }
 
 </script>

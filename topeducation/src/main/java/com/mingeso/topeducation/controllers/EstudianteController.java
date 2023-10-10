@@ -43,7 +43,7 @@ public class EstudianteController {
             new Response(
                 HttpStatus.CREATED.value(),
                 "Estudiante ingresado correctamente.",
-                "/estudiantes/exito",
+                "/estudiantes/ingresar",
                 data
             ),
             HttpStatus.CREATED);

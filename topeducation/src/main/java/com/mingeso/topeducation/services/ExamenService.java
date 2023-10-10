@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -69,13 +70,14 @@ public class ExamenService {
             if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante con rut " + rut + " no existe.");
 
             Date fecha = row.getCell(1).getDateCellValue();
+            LocalDate fechaLocalDate = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
             Integer puntaje = (int) row.getCell(2).getNumericCellValue();
 
             if(puntaje < 0 || puntaje > 1000) throw new ValorFueraDeRangoException("El puntaje " + puntaje + " del " +
                     "estudiante con rut " + rut + " está fuera del rango permitido (0-1000).");
 
-            examenRepository.save(new Examen(fecha, puntaje, estudiante.get(), false));
+            examenRepository.save(new Examen(fechaLocalDate, puntaje, estudiante.get(), false));
         }
     }
 }

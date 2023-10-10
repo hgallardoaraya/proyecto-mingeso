@@ -43,11 +43,6 @@ public class Estudiante {
     @JsonManagedReference(value = "estudiante_tipoPagoArancel")
     @JsonIgnore
     TipoPagoArancel tipoPagoArancel;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_interes_meses_atraso", referencedColumnName = "id")
-    @JsonManagedReference(value = "estudiante_interesMesesAtraso")
-    @JsonIgnore
-    InteresMesesAtraso interesMesesAtraso;
     @OneToMany(mappedBy="estudiante")
     @JsonManagedReference(value = "estudiante_razones")
     @JsonIgnore

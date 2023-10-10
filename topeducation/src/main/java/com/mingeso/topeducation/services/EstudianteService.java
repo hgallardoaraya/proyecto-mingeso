@@ -48,12 +48,8 @@ public class EstudianteService {
         Optional<TipoPagoArancel> tipoPagoArancel = tipoPagoArancelRepository.findById(idTipoPagoArancel);
         if(tipoPagoArancel.isEmpty()) throw new RegistroNoExisteException("El tipo de pago arancel " + idTipoPagoArancel + " no existe.");
 
-        Optional<InteresMesesAtraso> interesMesesAtraso = interesMesesAtrasoRepository.findById(idInteresMesesAtraso);
-        if(interesMesesAtraso.isEmpty()) throw new RegistroNoExisteException("El interes por meses de atraso " + idInteresMesesAtraso + " no existe.");
-
         estudiante.setTipoColegio(tipoColegio.get());
         estudiante.setTipoPagoArancel(tipoPagoArancel.get());
-        estudiante.setInteresMesesAtraso(interesMesesAtraso.get());
 
         return estudianteRepository.save(estudiante);
     }

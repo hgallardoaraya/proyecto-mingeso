@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -19,7 +20,7 @@ public class Examen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     @Column(name = "fecha")
-    Date  fecha;
+    LocalDate fecha;
     @Column(name = "puntaje")
     Integer puntaje;
     @Column(name = "revision")
@@ -29,7 +30,7 @@ public class Examen {
     @JsonBackReference(value = "estudiante_examenes")
     Estudiante estudiante;
 
-    public Examen(Date fecha, Integer puntaje, Estudiante estudiante, Boolean revisado){
+    public Examen(LocalDate fecha, Integer puntaje, Estudiante estudiante, Boolean revisado){
         this.fecha = fecha;
         this.puntaje = puntaje;
         this.estudiante = estudiante;

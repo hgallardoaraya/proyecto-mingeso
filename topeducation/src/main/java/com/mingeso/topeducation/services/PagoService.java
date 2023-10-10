@@ -66,7 +66,7 @@ public class PagoService {
     }
 
     public ArrayList<Razon> obtenerRazonesAPagar(String rut) {
-        return razonRepository.findCuotaProcesoAndAtrasadasByRut(rut);
+        return razonRepository.findCuotasAPagarByRut(rut);
     }
 
     /*▪ RUT estudiante <Listo>
@@ -82,36 +82,32 @@ public class PagoService {
     ▪ Saldo por pagar
     ▪ Nro. Cuotas con retraso*/
     public List<EntradaReporteResumen> calcularReporteResumen(){
-        try{
-            List<EntradaReporteResumen> reporte = new ArrayList<>();
-            List<Estudiante> estudiantes = estudianteRepository.findAll();
-            if(estudiantes.isEmpty()) throw new RegistroNoExisteException("No existen estudiantes registrados.");
-            for(Estudiante estudiante : estudiantes){
-                List<Razon> razones = estudiante.getRazones();
-                List<Pago> pagos = estudiante.getPagos();
-                List<Examen> examenes = estudiante.getExamenes();
-                EntradaReporteResumen entrada = EntradaReporteResumen.builder()
-                        .rut(estudiante.getRut())
-                        .numeroExamenesRendidos(examenes.size())
-                        .promedioExamenes(calcularPromedioExamenes(examenes))
-                        .totalArancel(calcularTotalArancel(razones))
-                        .tipoPago(estudiante.getTipoPagoArancel().getTipo())
-                        .numeroCuotasPactadas(calcularNumeroCuotasPactadas(razones))
-                        .numeroCuotasPagadas(calcularNumeroCuotasPagadas(razones))
-                        .arancelPagado(calcularArancelPagado(razones))
-                        .totalPagado(calcularTotalPagado(razones))
-                        .fechaUltimoPago(calcularFechaUltimoPago(pagos))
-                        .saldoArancelPendiente(calcularArancelPendiente(razones))
-                        .saldoTotalPendiente(calcularTotalPendiente(razones))
-                        .numeroCuotasAtrasadas(calcularNumeroCuotasAtrasadas(razones))
-                        .build();
-                reporte.add(entrada);
-            }
-            System.out.println(reporte.toString());
-            return reporte;
-        }catch(Exception e){
-            throw new RuntimeException("Error: " + e.getMessage());
+        List<EntradaReporteResumen> reporte = new ArrayList<>();
+        List<Estudiante> estudiantes = estudianteRepository.findAll();
+        if(estudiantes.isEmpty()) throw new RegistroNoExisteException("No existen estudiantes registrados.");
+        for(Estudiante estudiante : estudiantes){
+            List<Razon> razones = estudiante.getRazones();
+            List<Pago> pagos = estudiante.getPagos();
+            List<Examen> examenes = estudiante.getExamenes();
+            EntradaReporteResumen entrada = EntradaReporteResumen.builder()
+                    .rut(estudiante.getRut())
+                    .numeroExamenesRendidos(examenes.size())
+                    .promedioExamenes(calcularPromedioExamenes(examenes))
+                    .totalArancel(calcularTotalArancel(razones))
+                    .tipoPago(estudiante.getTipoPagoArancel().getTipo())
+                    .numeroCuotasPactadas(calcularNumeroCuotasPactadas(razones))
+                    .numeroCuotasPagadas(calcularNumeroCuotasPagadas(razones))
+                    .arancelPagado(calcularArancelPagado(razones))
+                    .totalPagado(calcularTotalPagado(razones))
+                    .fechaUltimoPago(calcularFechaUltimoPago(pagos))
+                    .saldoArancelPendiente(calcularArancelPendiente(razones))
+                    .saldoTotalPendiente(calcularTotalPendiente(razones))
+                    .numeroCuotasAtrasadas(calcularNumeroCuotasAtrasadas(razones))
+                    .build();
+            reporte.add(entrada);
         }
+        System.out.println(reporte.toString());
+        return reporte;
     }
 
     private int calcularNumeroCuotasAtrasadas(List<Razon> razones){
@@ -153,7 +149,7 @@ public class PagoService {
     }
 
     private LocalDate calcularFechaUltimoPago(List<Pago> pagos){
-        Integer anioActual = LocalDate.now().getYear();
+        if(pagos.size() < 1) return null;
         LocalDate fechaUltimoPago = pagos.get(0).getFecha();
         for(Pago pago : pagos){
             if(pago.getFecha().isAfter(fechaUltimoPago)){

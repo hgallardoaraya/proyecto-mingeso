@@ -2,8 +2,11 @@ package com.mingeso.topeducation.controllers;
 
 import com.mingeso.topeducation.entities.Razon;
 import com.mingeso.topeducation.requests.RegistrarPagoRequest;
+import com.mingeso.topeducation.responses.Response;
 import com.mingeso.topeducation.services.PagoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +28,13 @@ public class PagoController {
 
     @GetMapping("/registrar/ingresar-estudiante")
     public String vistaIngresarEstudiantePago(){
-        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
+//        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
         return "registrar-pago-ingreso-estudiante.html";
     }
 
     @GetMapping("/registrar")
     public String vistaSeleccionarRazonesPago(@RequestParam String rut, Model model){
-        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
+//        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
         ArrayList<Razon> razones = pagoService.obtenerRazonesAPagar(rut);
         model.addAttribute("razones", razones);
         model.addAttribute("rut", rut);
@@ -39,10 +42,17 @@ public class PagoController {
     }
 
     @PostMapping("/registrar")
-    public String registrarPago(@RequestBody RegistrarPagoRequest request){
-        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
+    public ResponseEntity<Response> registrarPago(@RequestBody RegistrarPagoRequest request){
+//        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
         pagoService.registrarPago(request);
-        return "redirect:/registrar/ingresar-estudiante";
+        return new ResponseEntity<Response>(
+                new Response(
+                        HttpStatus.CREATED.value(),
+                        "Pago realizado con éxito.",
+                        "/pagos/registrar/ingresar-estudiante"
+                ),
+                HttpStatus.CREATED
+        );
     }
 
     @GetMapping("/reporte")

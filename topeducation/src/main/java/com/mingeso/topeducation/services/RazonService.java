@@ -118,13 +118,7 @@ public class RazonService {
     @Transactional
     public void calcularPlanilla(){
 
-        List<Examen> examenes = examenRepository.findAllSinRevision();
-
-        Map<String, List<Integer>> rutPuntajes = obtenerPuntajesPorRut(examenes);
-
-        actualizarRevisionExamenes(examenes);
-
-        aplicarDescuentosPorPuntajes(rutPuntajes);
+        aplicarDescuentosPorPuntajes();
 
         aplicarInteresesPorMesesAtraso();
 
@@ -180,14 +174,26 @@ public class RazonService {
         }
     }
 
-    public void aplicarDescuentosPorPuntajes(Map<String, List<Integer>> rutPuntajes){
+    public void aplicarDescuentosPorPuntajes(){
+        List<Examen> examenes = examenRepository.findAllSinRevision();
+
+        //Asumiendo que estoy haciendo el cálculo de planilla después del último viernes, solo tomo los exámenes realizados
+        //un par de días antes, para que en caso de que haya exámenes no revisados en meses anteriores no contabilizarlos
+        //En ese sentido, es responsabilidad del usuario realizar el cálculo de planilla cada vez para contabilizar
+        //los exámenes respectivos.
+        List<Examen> examenesProcesoActual = examenes.stream().filter(examen -> examen.getFecha().isAfter(LocalDate.now().minusDays(5))).toList();
+
+        Map<String, List<Integer>> rutPuntajes = obtenerPuntajesPorRut(examenesProcesoActual);
+
+        actualizarRevisionExamenes(examenesProcesoActual);
+
         for(String rut : rutPuntajes.keySet()){
             //Calcular total
             Integer total = rutPuntajes.get(rut).stream().reduce(0, Integer::sum);
             //Calcular promedio
             Integer promedio = total/rutPuntajes.get(rut).size();
             Integer porcentajeDescuento = descuentoPuntajePruebaRepository.findDescuentoByPuntaje(promedio);
-            List<Razon> cuotasArancel = razonRepository.findCuotaProcesoAndAtrasadasByRut(rut);
+            List<Razon> cuotasArancel = razonRepository.findCuotasAPagarByRut(rut);
             for(Razon cuota : cuotasArancel){
                 //aplicar descuento
                 cuota.setMonto(cuota.getMonto() - ((cuota.getMonto() * porcentajeDescuento) / 100));

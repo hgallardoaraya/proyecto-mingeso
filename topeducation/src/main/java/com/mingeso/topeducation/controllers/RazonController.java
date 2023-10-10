@@ -57,6 +57,6 @@ public class RazonController {
     @PostMapping("/planilla")
     public String calcularPlanilla(){
         razonService.calcularPlanilla();
-        return "redirect:/calcular-planilla";
+        return "redirect:/razones/calcular-planilla";
     }
 }
