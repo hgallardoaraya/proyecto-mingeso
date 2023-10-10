@@ -2,6 +2,7 @@ package com.mingeso.topeducation.services;
 
 import com.mingeso.topeducation.entities.*;
 import com.mingeso.topeducation.exceptions.RegistroNoExisteException;
+import com.mingeso.topeducation.exceptions.ValorFueraDeRangoException;
 import com.mingeso.topeducation.repositories.EstadoRazonRepository;
 import com.mingeso.topeducation.repositories.EstudianteRepository;
 import com.mingeso.topeducation.repositories.PagoRepository;
@@ -33,7 +34,7 @@ public class PagoService {
 
     //Existe un pago que contiene todas las razones que se desean pagar.
     @Transactional
-    public void registrarPago(RegistrarPagoRequest request) {
+    public Pago registrarPago(RegistrarPagoRequest request) {
         Pago pago = new Pago();
 
         Optional<Estudiante> estudiante = estudianteRepository.findByRut(request.getRut());
@@ -48,10 +49,12 @@ public class PagoService {
         for(Integer idRazon : request.getIdsRazones()){
             Optional<Razon> razon = razonRepository.findById(idRazon);
             if(razon.isEmpty()) throw new RegistroNoExisteException("No existe la razon con id " + idRazon + ".");
+            if(razon.get().getMonto() <= 0) throw new ValorFueraDeRangoException("El monto de la cuota no debe ser menor" +
+                    " o igual a 0.");
             //estado "PAGADA"
-            Optional<EstadoRazon> estadoRazon = estadoRazonRepository.findById(0);
-            if(estadoRazon.isEmpty()) throw new RegistroNoExisteException("Error al obtener el estado de id 0.");
-            razon.get().setEstado(estadoRazon.get());
+            Optional<EstadoRazon> estadoPagada = estadoRazonRepository.findById(0);
+            if(estadoPagada.isEmpty()) throw new RegistroNoExisteException("Error al obtener el estado de id 0.");
+            razon.get().setEstado(estadoPagada.get());
             razones.add(razon.get());
             razonRepository.save(razon.get());
             total += razon.get().getMonto();
@@ -62,7 +65,7 @@ public class PagoService {
         pago.setTotal(total);
         pago.setFecha(LocalDate.now());
 
-        pagoRepository.save(pago);
+        return pagoRepository.save(pago);
     }
 
     public ArrayList<Razon> obtenerRazonesAPagar(String rut) {

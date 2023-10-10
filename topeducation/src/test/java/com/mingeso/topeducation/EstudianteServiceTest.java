@@ -1,5 +1,6 @@
 package com.mingeso.topeducation;
 import com.mingeso.topeducation.entities.Estudiante;
+import com.mingeso.topeducation.entities.Pago;
 import com.mingeso.topeducation.entities.TipoColegio;
 import com.mingeso.topeducation.entities.TipoPagoArancel;
 import com.mingeso.topeducation.exceptions.RegistroNoExisteException;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -45,7 +47,11 @@ public class EstudianteServiceTest {
 
     @BeforeEach
     public void setUp() {
-        estudiante = new Estudiante();
+        estudiante = crearEstudiantePorDefecto();
+    }
+
+    public Estudiante crearEstudiantePorDefecto(){
+        Estudiante estudiante = new Estudiante();
         estudiante.setRut("11.222.333-4");
         estudiante.setNombre1("NombreTest 1");
         estudiante.setNombre2("NombreTest 2");
@@ -54,14 +60,16 @@ public class EstudianteServiceTest {
         estudiante.setFechaNacimiento(LocalDate.of(1999, 1, 1));
         estudiante.setAnioEgreso(2018);
         estudiante.setNombreColegio("Colegio Test");
+        return estudiante;
     }
 
     @Test
     public void testIngresarEstudiante() {
         IngresarEstudianteRequest request = new IngresarEstudianteRequest();
 
+        Estudiante estudianteEsperado = crearEstudiantePorDefecto();
+
         request.setEstudiante(estudiante);
-        System.out.println(estudiante);
         request.setIdTipoColegio(1);
         request.setIdTipoPagoArancel(2);
 
@@ -75,15 +83,22 @@ public class EstudianteServiceTest {
         // Simular comportamiento de los repositorios
         when(tipoColegioRepository.findById(1)).thenReturn(Optional.of(tipoColegio));
         when(tipoPagoArancelRepository.findById(2)).thenReturn(Optional.of(tipoPagoArancel));
-        when(estudianteRepository.save(request.getEstudiante())).thenReturn(estudiante);
+        when(estudianteRepository.save(any(Estudiante.class))).thenAnswer(invocation -> invocation.getArgument(0, Estudiante.class));
 
         // Ejecutar el método a probar
         Estudiante resultado = estudianteService.ingresarEstudiante(request);
 
-        // Verificar que se guardó el estudiante correctamente
-        verify(estudianteRepository, times(1)).save(estudiante);
+        System.out.println(estudianteEsperado);
+        System.out.println(resultado);
 
-        assertEquals(estudiante, resultado);
+        assertEquals(estudianteEsperado.getRut(), resultado.getRut());
+        assertEquals(estudianteEsperado.getNombre1(), resultado.getNombre1());
+        assertEquals(estudianteEsperado.getNombre2(), resultado.getNombre2());
+        assertEquals(estudianteEsperado.getApellido1(), resultado.getApellido1());
+        assertEquals(estudianteEsperado.getApellido2(), resultado.getApellido2());
+        assertEquals(estudianteEsperado.getFechaNacimiento(), resultado.getFechaNacimiento());
+        assertEquals(estudianteEsperado.getAnioEgreso(), resultado.getAnioEgreso());
+        assertEquals(estudianteEsperado.getNombreColegio(), resultado.getNombreColegio());
     }
 
     @Test
@@ -132,7 +147,6 @@ public class EstudianteServiceTest {
 
         when(estudianteRepository.findByRut(rut)).thenReturn(Optional.of(estudiante));
         when(maxCuotasTipoColegioRepository.findMaxCuotasByTipoColegio(estudiante.getTipoColegio().getId())).thenReturn(7);
-
 
         // Prueba
         Integer resultado = estudianteService.obtenerMaxCuotas(estudiante.getRut());

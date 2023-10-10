@@ -31,10 +31,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ExamenService {
-    EstudianteRepository estudianteRepository;
-    ExamenRepository examenRepository;
-    DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository;
-    RazonRepository razonRepository;
+    private final EstudianteRepository estudianteRepository;
+    private final ExamenRepository examenRepository;
 
     @Autowired
     public ExamenService(EstudianteRepository estudianteRepository,
@@ -42,7 +40,6 @@ public class ExamenService {
                          DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository){
         this.estudianteRepository = estudianteRepository;
         this.examenRepository = examenRepository;
-        this.descuentoPuntajePruebaRepository = descuentoPuntajePruebaRepository;
     }
 
     @Transactional
