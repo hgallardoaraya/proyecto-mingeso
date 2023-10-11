@@ -57,7 +57,7 @@ public class RazonService {
     }
 
     @Transactional
-    public void generarCuotas(String rut, Integer numCuotas){
+    public List<Razon> generarCuotas(String rut, Integer numCuotas){
 
         Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
 
@@ -93,7 +93,10 @@ public class RazonService {
 
         // Matricula
         Razon matricula = new Razon(0, totalMatricula, fechaInicioMatricula, fechaInicioClases, tipoMatricula, estadoPendiente, estudiante.get());
-        razonRepository.save(matricula);
+        Razon resultadoMatricula = razonRepository.save(matricula);
+
+        List<Razon> razones = new ArrayList<>();
+        razones.add(resultadoMatricula);
 
         //Generar cuotas arancel
         LocalDate fechaInicioArancel = LocalDate.of(fechaInicioClases.getYear(), fechaInicioClases.getMonth().plus(1), 5);
@@ -105,10 +108,13 @@ public class RazonService {
         for(int i = 0; i < numCuotas; i++){
             Integer numero = i + 1;
             Razon arancel = new Razon(numero, cuota, fechaInicioArancel, fechaFinArancel, tipoArancel, estadoPendiente, estudiante.get());
-            razonRepository.save(arancel);
+            Razon resultadoArancel = razonRepository.save(arancel);
+            razones.add(resultadoArancel);
             fechaInicioArancel = fechaInicioArancel.plusMonths(1);
             fechaFinArancel = fechaFinArancel.plusMonths(1);
         }
+
+        return razones;
     }
 
     public ArrayList<Razon> getRazones(String rut) {

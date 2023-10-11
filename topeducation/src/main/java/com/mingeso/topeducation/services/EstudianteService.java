@@ -11,22 +11,25 @@ import java.util.Optional;
 
 @Service
 public class EstudianteService {
-    private final EstudianteRepository estudianteRepository;
-     
-    private final TipoColegioRepository tipoColegioRepository;
-    private final TipoPagoArancelRepository tipoPagoArancelRepository;
-    private final MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
-
     @Autowired
-    public EstudianteService(EstudianteRepository estudianteRepository,
-                             TipoColegioRepository tipoColegioRepository,
-                             TipoPagoArancelRepository tipoPagoArancelRepository,
-                             MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository){
-        this.estudianteRepository = estudianteRepository;
-        this.tipoColegioRepository = tipoColegioRepository;
-        this.tipoPagoArancelRepository = tipoPagoArancelRepository;
-        this.maxCuotasTipoColegioRepository = maxCuotasTipoColegioRepository;
-    }
+    private EstudianteRepository estudianteRepository;
+    @Autowired
+    private TipoColegioRepository tipoColegioRepository;
+    @Autowired
+    private TipoPagoArancelRepository tipoPagoArancelRepository;
+    @Autowired
+    private MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
+
+//    @Autowired
+//    public EstudianteService(EstudianteRepository estudianteRepository,
+//                             TipoColegioRepository tipoColegioRepository,
+//                             TipoPagoArancelRepository tipoPagoArancelRepository,
+//                             MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository){
+//        this.estudianteRepository = estudianteRepository;
+//        this.tipoColegioRepository = tipoColegioRepository;
+//        this.tipoPagoArancelRepository = tipoPagoArancelRepository;
+//        this.maxCuotasTipoColegioRepository = maxCuotasTipoColegioRepository;
+//    }
 
     public Estudiante ingresarEstudiante(IngresarEstudianteRequest request){
         Estudiante estudiante = request.getEstudiante();

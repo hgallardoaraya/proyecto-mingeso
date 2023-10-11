@@ -94,22 +94,21 @@ public class PagoService {
             List<Examen> examenes = estudiante.getExamenes();
             EntradaReporteResumen entrada = EntradaReporteResumen.builder()
                     .rut(estudiante.getRut())
-                    .numeroExamenesRendidos(examenes.size())
-                    .promedioExamenes(calcularPromedioExamenes(examenes))
+                    .numeroExamenesRendidos(examenes == null ? 0 : examenes.size())
+                    .promedioExamenes(examenes == null ? 0 : calcularPromedioExamenes(examenes))
                     .totalArancel(calcularTotalArancel(razones))
                     .tipoPago(estudiante.getTipoPagoArancel().getTipo())
                     .numeroCuotasPactadas(calcularNumeroCuotasPactadas(razones))
                     .numeroCuotasPagadas(calcularNumeroCuotasPagadas(razones))
                     .arancelPagado(calcularArancelPagado(razones))
                     .totalPagado(calcularTotalPagado(razones))
-                    .fechaUltimoPago(calcularFechaUltimoPago(pagos))
+                    .fechaUltimoPago(pagos == null ? null : calcularFechaUltimoPago(pagos))
                     .saldoArancelPendiente(calcularArancelPendiente(razones))
                     .saldoTotalPendiente(calcularTotalPendiente(razones))
                     .numeroCuotasAtrasadas(calcularNumeroCuotasAtrasadas(razones))
                     .build();
             reporte.add(entrada);
         }
-        System.out.println(reporte.toString());
         return reporte;
     }
 
@@ -225,7 +224,9 @@ public class PagoService {
 
     private int calcularPromedioExamenes(List<Examen> examenes){
         int promedioExamenes = 0;
+        if(examenes.isEmpty()) return 0;
         for(Examen examen : examenes){
+            if(examen.getPuntaje() == null) examen.setPuntaje(0);
             promedioExamenes += examen.getPuntaje();
         }
         promedioExamenes /= examenes.size();
