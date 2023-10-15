@@ -46,7 +46,4 @@ pipeline{
             }
         }
     }
-
-    git credentialsId: 'gitcredentials', url: 'https://github.com/hector-gallard0/proyecto-mingeso'
-
 }
