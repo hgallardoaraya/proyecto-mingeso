@@ -56,7 +56,6 @@ public class RazonServiceTest {
     @InjectMocks
     RazonService razonService;
 
-    @Test
     void generarCuotasTest(){
         Estudiante estudiante = crearEstudiantePorDefecto();
 

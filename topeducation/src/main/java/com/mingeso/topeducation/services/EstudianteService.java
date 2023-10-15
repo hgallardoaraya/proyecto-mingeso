@@ -35,6 +35,7 @@ public class EstudianteService {
         Estudiante estudiante = request.getEstudiante();
         Integer idTipoColegio = request.getIdTipoColegio();
         Integer idTipoPagoArancel = request.getIdTipoPagoArancel();
+        System.out.println(estudiante);
 
         Optional<TipoColegio> tipoColegio = tipoColegioRepository.findById(idTipoColegio);
         if(tipoColegio.isEmpty()) throw new RegistroNoExisteException("El colegio " + idTipoColegio + " no existe.");

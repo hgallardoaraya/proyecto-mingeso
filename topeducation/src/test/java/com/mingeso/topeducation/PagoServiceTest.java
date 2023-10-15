@@ -157,48 +157,53 @@ public class PagoServiceTest {
         assertEquals(razones, resultado);
     }
 
-//    @Test
-//    void testCalcularReporteResumen(){
-//        List<Estudiante> estudiantes = crearListaEstudiantesPorDefectoConRelaciones();
-//
-//        when(estudianteRepository.findAll()).thenReturn(estudiantes);
-//
-//        EntradaReporteResumen entradaEstudiante1 = EntradaReporteResumen.builder()
-//                .rut(estudiantes.get(0).getRut())
-//                .numeroExamenesRendidos(2)
-//                .promedioExamenes(550)
-//                .totalArancel(600)
-//                .tipoPago("CUOTAS")
-//                .numeroCuotasPactadas(2)
-//                .numeroCuotasPagadas(0)
-//                .arancelPagado(0)
-//                .totalPagado(100)
-//                .fechaUltimoPago(LocalDate.now())
-//                .saldoArancelPendiente(600)
-//                .saldoTotalPendiente(600)
-//                .numeroCuotasAtrasadas(1)
-//                .build();
-//
-//        EntradaReporteResumen entradaEstudiante2 = EntradaReporteResumen.builder()
-//                .rut(estudiantes.get(1).getRut())
-//                .numeroExamenesRendidos(2)
-//                .promedioExamenes(50)
-//                .totalArancel(500)
-//                .tipoPago("CUOTAS")
-//                .numeroCuotasPactadas(2)
-//                .numeroCuotasPagadas(1)
-//                .arancelPagado(200)
-//                .totalPagado(200)
-//                .fechaUltimoPago(null)
-//                .saldoArancelPendiente(300)
-//                .saldoTotalPendiente(300)
-//                .numeroCuotasAtrasadas(0)
-//                .build();
-//
-//        List<EntradaReporteResumen> resultado = pagoService.calcularReporteResumen();
-//        assertEquals(entradaEstudiante1, resultado.get(0));
-//        assertEquals(entradaEstudiante2, resultado.get(1));
-//    }
+    @Test
+    void testCalcularReporteResumen(){
+        List<Estudiante> estudiantes = crearListaEstudiantesPorDefectoConRelaciones();
+
+        when(estudianteRepository.findAll()).thenReturn(estudiantes);
+
+        EntradaReporteResumen entradaEstudiante1 = EntradaReporteResumen.builder()
+                .rut(estudiantes.get(0).getRut())
+                .numeroExamenesRendidos(2)
+                .promedioExamenes(550)
+                .totalArancel(600)
+                .tipoPago("CUOTAS")
+                .numeroCuotasPactadas(2)
+                .numeroCuotasPagadas(0)
+                .arancelPagado(0)
+                .totalPagado(100)
+                .fechaUltimoPago(LocalDate.now())
+                .saldoArancelPendiente(600)
+                .saldoTotalPendiente(600)
+                .numeroCuotasAtrasadas(1)
+                .build();
+
+        EntradaReporteResumen entradaEstudiante2 = EntradaReporteResumen.builder()
+                .rut(estudiantes.get(1).getRut())
+                .numeroExamenesRendidos(2)
+                .promedioExamenes(50)
+                .totalArancel(500)
+                .tipoPago("CUOTAS")
+                .numeroCuotasPactadas(2)
+                .numeroCuotasPagadas(1)
+                .arancelPagado(200)
+                .totalPagado(200)
+                .fechaUltimoPago(null)
+                .saldoArancelPendiente(300)
+                .saldoTotalPendiente(300)
+                .numeroCuotasAtrasadas(0)
+                .build();
+
+
+        List<EntradaReporteResumen> resultado = pagoService.calcularReporteResumen();
+        System.out.println(resultado.get(0));
+        System.out.println(entradaEstudiante1);
+        System.out.println(resultado.get(1));
+        System.out.println(entradaEstudiante2);
+        assertEquals(entradaEstudiante1, resultado.get(0));
+        assertEquals(entradaEstudiante2, resultado.get(1));
+    }
 
     public Estudiante crearEstudiantePorDefecto(){
         Estudiante estudiante = new Estudiante();
@@ -223,7 +228,9 @@ public class PagoServiceTest {
         tipoPagoArancel.setTipo("CUOTAS");
 
         this.estudiante.setTipoPagoArancel(tipoPagoArancel);
+        this.estudiante.setCuotasPactadas(2);
         estudiante2.setTipoPagoArancel(tipoPagoArancel);
+        estudiante2.setCuotasPactadas(2);
 
         TipoRazon tipoArancel = new TipoRazon();
         tipoArancel.setId(1);
