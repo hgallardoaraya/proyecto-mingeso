@@ -7,6 +7,7 @@
     <title>Registrar pago estudiante</title>
 </head>
 <body>
+    <nav th:insert="~{fragments/navbar.html :: navbar}"> </nav>
     <h1 class="text-3xl mb-4 font-bold">Registrar pago estudiante</h1>
     <form id="ingresarRutForm" class="flex flex-col gap-3 w-fit" th:action="@{/pagos/registrar}" method="GET">
         <div class="flex flex-col">

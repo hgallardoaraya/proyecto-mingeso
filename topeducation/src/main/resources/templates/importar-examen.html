@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Importar examen</title>
 </head>
 <body>
+    <nav th:insert="~{fragments/navbar.html :: navbar}"> </nav>
     <form id="archivoForm" action="">
         <input type="file" id="archivo">
         <button type="submit">Enviar archivo</button>
@@ -31,8 +33,11 @@
         })
 
         const rawResponse = await response.json();
+        alert(rawResponse.message);
 
-        console.log(rawResponse);
+        if(rawResponse.status === 201){
+            location.reload();
+        }
     }
 
 </script>

@@ -24,7 +24,7 @@ public class EstudianteController {
     }
 
     @GetMapping("/ingresar")
-    public String ingresar(){
+    public String vistaIngresarEstudiante(){
         return "ingresar-estudiante.html";
     }
 

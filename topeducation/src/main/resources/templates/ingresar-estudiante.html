@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingresar estudiante</title>
     <script src="https://cdn.tailwindcss.com"></script>
-<!--    <link rel="preconnect" href="https://fonts.googleapis.com">-->
-<!--    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>-->
-<!--    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">-->
-<!--    <link rel = "stylesheet" href= "../static/css/navbar.css" type="text/css" th:href="@{/css/navbar.css}">-->
 </head>
 <body>
+    <nav th:insert="~{fragments/navbar.html :: navbar}"> </nav>
     <div class="p-3 w-screen h-screen">
         <h1 class="text-3xl mb-4 font-bold">Ingresar estudiante</h1>
         <form id="ingresarEstudianteForm" class="flex flex-col gap-3 w-fit" action="">
@@ -114,8 +111,6 @@
 
         alert(rawResponse.message);
 
-        if(rawResponse.status == 201){            
-            window.location.replace(rawResponse.pathRedirect);
-        }
+        location.reload();
     }
 </script>

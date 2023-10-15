@@ -1,6 +1,7 @@
 package com.mingeso.topeducation.controllers;
 
 import com.mingeso.topeducation.entities.Razon;
+import com.mingeso.topeducation.exceptions.FechaNoPermitidaException;
 import com.mingeso.topeducation.requests.RegistrarPagoRequest;
 import com.mingeso.topeducation.responses.Response;
 import com.mingeso.topeducation.services.PagoService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/pagos")
@@ -28,23 +30,25 @@ public class PagoController {
 
     @GetMapping("/registrar/ingresar-estudiante")
     public String vistaIngresarEstudiantePago(){
-//        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
         return "registrar-pago-ingreso-estudiante.html";
     }
 
     @GetMapping("/registrar")
     public String vistaSeleccionarRazonesPago(@RequestParam String rut, Model model){
-//        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
-        ArrayList<Razon> razones = pagoService.obtenerRazonesAPagar(rut);
-        model.addAttribute("razones", razones);
-        model.addAttribute("rut", rut);
-        return "registrar-pago-seleccionar-razones.html";
+        try{
+            List<Razon> razones = pagoService.obtenerRazonesAPagar(rut, LocalDate.now());
+            model.addAttribute("razones", razones);
+            model.addAttribute("rut", rut);
+            return "registrar-pago-seleccionar-razones.html";
+        }catch (FechaNoPermitidaException ex){
+            model.addAttribute("message", ex.getMessage());
+            return "error.html";
+        }
     }
 
     @PostMapping("/registrar")
     public ResponseEntity<Response> registrarPago(@RequestBody RegistrarPagoRequest request){
-//        if(fechaActual.getDayOfMonth() < 5 || fechaActual.getDayOfMonth() > 10) return "error-fechas-pago.html";
-        pagoService.registrarPago(request);
+        pagoService.registrarPago(request, LocalDate.now());
         return new ResponseEntity<Response>(
                 new Response(
                         HttpStatus.CREATED.value(),

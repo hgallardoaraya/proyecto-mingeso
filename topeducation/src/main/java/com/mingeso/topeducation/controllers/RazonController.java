@@ -3,7 +3,6 @@ package com.mingeso.topeducation.controllers;
 import com.mingeso.topeducation.entities.Razon;
 import com.mingeso.topeducation.responses.Response;
 import com.mingeso.topeducation.services.RazonService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -28,15 +27,21 @@ public class RazonController {
         this.razonService = razonService;
     }
 
+    @GetMapping("/ingresar-estudiante")
+    public String vistaListarRazones(){
+        return "listar-razones-ingreso-estudiante.html";
+    }
+
     @GetMapping
     public String listarRazones(@RequestParam String rut, Model model) {
-        ArrayList<Razon> razones = razonService.getRazones(rut);
+        List<Razon> razones = razonService.obtenerRazones(rut);
         model.addAttribute("razones", razones);
+
         return "listar-razones.html";
     }
 
     @GetMapping("/generar")
-    public String generarCuotas(){
+    public String vistaGenerarCuotas(){
         return "generar-cuotas.html";
     }
 
@@ -49,14 +54,15 @@ public class RazonController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("/planilla")
+    @GetMapping("/planilla/calcular")
     public String vistaCalcularPlanilla(){
-        return "calcular-planilla";
+        return "calcular-planilla.html";
     }
 
     @PostMapping("/planilla")
-    public String calcularPlanilla(){
-        razonService.calcularPlanilla();
-        return "redirect:/razones/calcular-planilla";
+    public String calcularPlanilla(Model model){
+        razonService.calcularPlanilla(LocalDate.now());
+        model.addAttribute("message", "Planilla calculada con éxito");
+        return "/calcular-planilla.html";
     }
 }

@@ -28,7 +28,7 @@ public class ExamenController {
     }
 
     @GetMapping("/importar")
-    public String ingresar(){
+    public String vistaImportarExamen(){
         return "importar-examen.html";
     }
 

@@ -1,0 +1,31 @@
+
+
+1 04 pagada
+2 05 atrasada
+3 06 atrasada
+4 07 atrasada
+5 08
+6 09
+7 10
+
+
+9 15 15 
+
+es 144 cada monto
+136 desc + interes
+
+
+1 04 pagada X
+2 05 atrasada
+3 06 atrasada
+4 07 atrasada
+5 08 atrasada 
+6 09 pendiente
+7 10 x
+8 11
+9 12
+10 01
+
+3 6 9 15 15
+
+no tiene descuento se mantiene el monto con desc + interes pq desc = 0

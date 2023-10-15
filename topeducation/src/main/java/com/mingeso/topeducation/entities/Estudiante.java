@@ -34,6 +34,8 @@ public class Estudiante {
     Integer anioEgreso;
     @Column(name = "nombre_colegio")
     String nombreColegio;
+    @Column(name = "cuotas_pactadas")
+    Integer cuotasPactadas;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_colegio", referencedColumnName = "id")
     @JsonManagedReference(value = "estudiante_tipoColegio")

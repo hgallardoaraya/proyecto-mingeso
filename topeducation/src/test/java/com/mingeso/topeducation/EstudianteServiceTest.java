@@ -88,17 +88,10 @@ public class EstudianteServiceTest {
         // Ejecutar el método a probar
         Estudiante resultado = estudianteService.ingresarEstudiante(request);
 
-        System.out.println(estudianteEsperado);
-        System.out.println(resultado);
+        estudianteEsperado.setTipoColegio(tipoColegio);
+        estudianteEsperado.setTipoPagoArancel(tipoPagoArancel);
 
-        assertEquals(estudianteEsperado.getRut(), resultado.getRut());
-        assertEquals(estudianteEsperado.getNombre1(), resultado.getNombre1());
-        assertEquals(estudianteEsperado.getNombre2(), resultado.getNombre2());
-        assertEquals(estudianteEsperado.getApellido1(), resultado.getApellido1());
-        assertEquals(estudianteEsperado.getApellido2(), resultado.getApellido2());
-        assertEquals(estudianteEsperado.getFechaNacimiento(), resultado.getFechaNacimiento());
-        assertEquals(estudianteEsperado.getAnioEgreso(), resultado.getAnioEgreso());
-        assertEquals(estudianteEsperado.getNombreColegio(), resultado.getNombreColegio());
+        assertEquals(estudianteEsperado, resultado);
     }
 
     @Test

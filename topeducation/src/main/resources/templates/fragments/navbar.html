@@ -1,11 +1,10 @@
-<ul>
-    <li><a href="#">Inicio</a></li>
-    <li><a href="#">Acerca de</a></li>
-    <li><a href="#">Servicios</a></li>
-    <li><a href="#">Portafolio</a></li>
-    <li><a href="#">Blog</a></li>
-    <li><a href="#">Contacto</a></li>
-    <li><a href="#">Tienda</a></li>
-    <li><a href="#">Galería</a></li>
-    <li><a href="#">Ayuda</a></li>
+
+<ul th:fragment="navbar" style="display: flex; gap:25px">
+    <li><a href="/estudiantes/ingresar">Ingresar estudiante</a></li>
+    <li><a href="/razones/generar">Generar cuotas de pago</a></li>
+    <li><a href="/razones/ingresar-estudiante">Listar razones estudiante</a></li>
+    <li><a href="/pagos/registrar/ingresar-estudiante">Registrar pagos estudiante</a></li>
+    <li><a href="/examenes/importar">Importar examen</a></li>
+    <li><a href="/razones/planilla/calcular">Calcular planilla</a></li>
+    <li><a href="/pagos/reporte">Reporte resumen</a></li>
 </ul>

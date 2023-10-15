@@ -50,8 +50,8 @@ DROP TABLE IF EXISTS `descuento_puntaje_prueba`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `descuento_puntaje_prueba` (
   `id` int NOT NULL,
-  `puntaje_inferior` int NOT NULL,
-  `puntaje_superior` int NOT NULL,
+  `puntaje_inferior` double DEFAULT NULL,
+  `puntaje_superior` double DEFAULT NULL,
   `porcentaje_descuento` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -130,7 +130,7 @@ DROP TABLE IF EXISTS `estado_razon`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `estado_razon` (
   `id` int NOT NULL,
-  `estado` varchar(15) NOT NULL,
+  `estado` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -158,18 +158,19 @@ CREATE TABLE `estudiante` (
   `nombre2` varchar(255) DEFAULT NULL,
   `apellido1` varchar(255) DEFAULT NULL,
   `apellido2` varchar(255) DEFAULT NULL,
-  `rut` varchar(12) NOT NULL,
+  `rut` varchar(255) DEFAULT NULL,
   `fecha_nacimiento` date NOT NULL,
   `anio_egreso` int DEFAULT NULL,
   `nombre_colegio` varchar(255) DEFAULT NULL,
   `id_tipo_colegio` int NOT NULL,
   `id_tipo_pago_arancel` int NOT NULL,
+  `cuotas_pactadas` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_tipo_colegio_estudiante_idx` (`id_tipo_colegio`),
   KEY `fk_tipo_pago_arancel_estudiante_idx` (`id_tipo_pago_arancel`),
   CONSTRAINT `estudiante_tipo_colegio_id_fk` FOREIGN KEY (`id_tipo_colegio`) REFERENCES `tipo_colegio` (`id`),
   CONSTRAINT `estudiante_tipo_pago_arancel_id_fk` FOREIGN KEY (`id_tipo_pago_arancel`) REFERENCES `tipo_pago_arancel` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +179,7 @@ CREATE TABLE `estudiante` (
 
 LOCK TABLES `estudiante` WRITE;
 /*!40000 ALTER TABLE `estudiante` DISABLE KEYS */;
-INSERT INTO `estudiante` VALUES (8,'Eugenio','Felipe','Vasquez','Concha','19.234.554-8','2000-06-13',2020,'Santa Isabel de Hungría',1,0),(9,'Juan','Ramon','Perez','Diaz','20.234.343-7','2000-10-09',2019,'Santa Margarita',2,0),(10,'Felipe','Edmundo','Rodriguez','Velasquez','18.544.321-5','1997-10-27',2016,'Colegio 1',0,0),(11,'Nombre 1','Nombre 2 ','Apellido 1','Apellido 2','12.345.234-2','1995-10-09',2015,'Colegio 2',1,0),(12,'Raimundo','Bastian','Castro','Silva','19.234.235-8','1998-10-09',2022,'Colegio 3',1,0);
+INSERT INTO `estudiante` VALUES (8,'Eugenio','Felipe','Vasquez','Concha','19.234.554-8','2000-06-13',2020,'Santa Isabel de Hungría',1,0,7),(9,'Juan','Ramon','Perez','Diaz','20.234.343-7','2000-10-09',2019,'Santa Margarita',2,0,4),(10,'Felipe','Edmundo','Rodriguez','Velasquez','18.544.321-5','1997-10-27',2016,'Colegio 1',0,0,10),(11,'Nombre 1','Nombre 2 ','Apellido 1','Apellido 2','12.345.234-2','1995-10-09',2015,'Colegio 2',1,0,5),(12,'Raimundo','Bastian','Castro','Silva','19.234.235-8','1998-10-09',2022,'Colegio 3',1,0,2),(13,'Juán','Ramón','Vasquez','Silva','12.345.234-1','1999-10-20',2019,'Instituto Nacional',0,0,10),(14,'Juán','Ramón','Perez','Velasquez','20.285.942-3','1997-10-10',2017,'Colegio 4',1,0,7);
 /*!40000 ALTER TABLE `estudiante` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -229,7 +230,7 @@ CREATE TABLE `examen` (
   PRIMARY KEY (`id`),
   KEY `fk_estudiante_examen_idx` (`id_estudiante`),
   CONSTRAINT `examen_estudiante_id_fk` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -238,7 +239,7 @@ CREATE TABLE `examen` (
 
 LOCK TABLES `examen` WRITE;
 /*!40000 ALTER TABLE `examen` DISABLE KEYS */;
-INSERT INTO `examen` VALUES (28,8,'2023-09-29',900,0),(29,9,'2023-09-29',860,0),(30,10,'2023-09-29',700,0),(31,11,'2023-09-29',800,0),(32,12,'2023-09-29',988,0);
+INSERT INTO `examen` VALUES (28,8,'2023-09-29',900,0),(29,9,'2023-09-29',860,0),(30,10,'2023-09-29',700,0),(31,11,'2023-09-29',800,0),(32,12,'2023-09-29',988,0),(38,8,'2023-09-29',900,0),(39,9,'2023-09-29',860,0),(40,10,'2023-09-29',700,0),(41,11,'2023-09-29',800,0),(42,12,'2023-09-29',988,0),(43,13,'2023-09-29',700,0),(44,14,'2023-09-29',0,0);
 /*!40000 ALTER TABLE `examen` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -371,9 +372,10 @@ CREATE TABLE `razon` (
   KEY `fk_tipo_razon_razon_idx` (`id_tipo_razon`),
   KEY `fk_estado_razon_razon_idx` (`id_estado_razon`) /*!80000 INVISIBLE */,
   KEY `fk_estudiante_razon_idx` (`id_estudiante`),
+  CONSTRAINT `FK3234l23174ryxivjn258yiofj` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`id`),
   CONSTRAINT `razon_estado_razon_id_fk` FOREIGN KEY (`id_estado_razon`) REFERENCES `estado_razon` (`id`),
   CONSTRAINT `razon_tipo_razon_id_fk` FOREIGN KEY (`id_tipo_razon`) REFERENCES `tipo_razon` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=153 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -382,7 +384,7 @@ CREATE TABLE `razon` (
 
 LOCK TABLES `razon` WRITE;
 /*!40000 ALTER TABLE `razon` DISABLE KEYS */;
-INSERT INTO `razon` VALUES (86,0,0,70000,0,'2023-02-24','2023-03-01',8),(87,1,1,175714,0,'2023-04-05','2023-04-10',8),(88,1,2,175714,0,'2023-05-05','2023-05-10',8),(89,1,3,175714,0,'2023-06-05','2023-06-10',8),(90,1,4,175714,0,'2023-07-05','2023-07-10',8),(91,1,5,209109,2,'2023-08-05','2023-08-10',8),(92,1,6,209109,2,'2023-09-05','2023-09-10',8),(93,1,7,209109,2,'2023-10-05','2023-10-10',8),(94,0,0,70000,1,'2023-02-24','2023-03-01',9),(95,1,1,629642,2,'2023-04-05','2023-04-10',9),(96,1,2,629642,2,'2023-05-05','2023-05-10',9),(97,1,3,629642,2,'2023-06-05','2023-06-10',9),(98,1,4,629642,2,'2023-07-05','2023-07-10',9),(99,0,0,70000,1,'2023-02-24','2023-03-01',10),(100,1,1,249769,2,'2023-04-05','2023-04-10',10),(101,1,2,249769,2,'2023-05-05','2023-05-10',10),(102,1,3,249769,2,'2023-06-05','2023-06-10',10),(103,1,4,249769,2,'2023-07-05','2023-07-10',10),(104,1,5,249769,2,'2023-08-05','2023-08-10',10),(105,1,6,249769,2,'2023-09-05','2023-09-10',10),(106,1,7,249769,2,'2023-10-05','2023-10-10',10),(107,1,8,249769,1,'2023-11-05','2023-11-10',10),(108,1,9,249769,1,'2023-12-05','2023-12-10',10),(109,1,10,249769,1,'2024-01-05','2024-01-10',10),(110,0,0,70000,1,'2023-02-24','2023-03-01',11),(111,1,1,514731,2,'2023-04-05','2023-04-10',11),(112,1,2,514731,2,'2023-05-05','2023-05-10',11),(113,1,3,514731,2,'2023-06-05','2023-06-10',11),(114,1,4,514731,2,'2023-07-05','2023-07-10',11),(115,1,5,514731,2,'2023-08-05','2023-08-10',11),(116,0,0,70000,1,'2023-02-24','2023-03-01',12),(117,1,1,743906,2,'2023-04-05','2023-04-10',12),(118,1,2,743906,2,'2023-05-05','2023-05-10',12);
+INSERT INTO `razon` VALUES (86,0,0,70000,0,'2023-02-24','2023-03-01',8),(87,1,1,175714,0,'2023-04-05','2023-04-10',8),(88,1,2,175714,0,'2023-05-05','2023-05-10',8),(89,1,3,175714,0,'2023-06-05','2023-06-10',8),(90,1,4,175714,0,'2023-07-05','2023-07-10',8),(91,1,5,209109,2,'2023-08-05','2023-08-10',8),(92,1,6,209109,2,'2023-09-05','2023-09-10',8),(93,1,7,209109,2,'2023-10-05','2023-10-10',8),(94,0,0,70000,1,'2023-02-24','2023-03-01',9),(95,1,1,629642,2,'2023-04-05','2023-04-10',9),(96,1,2,629642,2,'2023-05-05','2023-05-10',9),(97,1,3,629642,2,'2023-06-05','2023-06-10',9),(98,1,4,629642,2,'2023-07-05','2023-07-10',9),(110,0,0,70000,1,'2023-02-24','2023-03-01',11),(111,1,1,514731,2,'2023-04-05','2023-04-10',11),(112,1,2,514731,2,'2023-05-05','2023-05-10',11),(113,1,3,514731,2,'2023-06-05','2023-06-10',11),(114,1,4,514731,2,'2023-07-05','2023-07-10',11),(115,1,5,514731,2,'2023-08-05','2023-08-10',11),(116,0,0,70000,1,'2023-02-24','2023-03-01',12),(117,1,1,743906,2,'2023-04-05','2023-04-10',12),(118,1,2,743906,2,'2023-05-05','2023-05-10',12),(119,0,0,70000,1,'2023-02-24','2023-03-01',13),(120,1,1,114000,1,'2023-04-05','2023-04-10',13),(121,1,2,114000,1,'2023-05-05','2023-05-10',13),(122,1,3,114000,1,'2023-06-05','2023-06-10',13),(123,1,4,114000,1,'2023-07-05','2023-07-10',13),(124,1,5,114000,1,'2023-08-05','2023-08-10',13),(125,1,6,114000,1,'2023-09-05','2023-09-10',13),(126,1,7,114000,1,'2023-10-05','2023-10-10',13),(127,1,8,114000,1,'2023-11-05','2023-11-10',13),(128,1,9,114000,1,'2023-12-05','2023-12-10',13),(129,1,10,114000,1,'2024-01-05','2024-01-10',13),(134,0,0,70000,2,'2023-02-24','2023-03-01',14),(135,1,1,192857,2,'2023-04-05','2023-04-10',14),(136,1,2,192857,2,'2023-05-05','2023-05-10',14),(137,1,3,192857,2,'2023-06-05','2023-06-10',14),(138,1,4,192857,2,'2023-07-05','2023-07-10',14),(139,1,5,192857,2,'2023-08-05','2023-08-10',14),(140,1,6,192857,2,'2023-09-05','2023-09-10',14),(141,1,7,192857,2,'2023-10-05','2023-10-10',14),(142,0,0,70000,2,'2023-02-24','2023-03-01',10),(143,1,1,120000,2,'2023-04-05','2023-04-10',10),(144,1,2,120000,2,'2023-05-05','2023-05-10',10),(145,1,3,120000,2,'2023-06-05','2023-06-10',10),(146,1,4,120000,2,'2023-07-05','2023-07-10',10),(147,1,5,120000,2,'2023-08-05','2023-08-10',10),(148,1,6,120000,2,'2023-09-05','2023-09-10',10),(149,1,7,120000,2,'2023-10-05','2023-10-10',10),(150,1,8,120000,1,'2023-11-05','2023-11-10',10),(151,1,9,120000,1,'2023-12-05','2023-12-10',10),(152,1,10,120000,1,'2024-01-05','2024-01-10',10);
 /*!40000 ALTER TABLE `razon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -395,9 +397,8 @@ DROP TABLE IF EXISTS `tipo_colegio`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tipo_colegio` (
   `id` int NOT NULL,
-  `tipo` varchar(15) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `tipo_UNIQUE` (`tipo`)
+  `tipo` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -407,7 +408,7 @@ CREATE TABLE `tipo_colegio` (
 
 LOCK TABLES `tipo_colegio` WRITE;
 /*!40000 ALTER TABLE `tipo_colegio` DISABLE KEYS */;
-INSERT INTO `tipo_colegio` VALUES (0,'MUNICIPAL'),(2,'PRIVADO'),(1,'SUBVENCIONADO');
+INSERT INTO `tipo_colegio` VALUES (0,'MUNICIPAL'),(1,'SUBVENCIONADO'),(2,'PRIVADO');
 /*!40000 ALTER TABLE `tipo_colegio` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -444,7 +445,7 @@ DROP TABLE IF EXISTS `tipo_pago_arancel`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tipo_pago_arancel` (
   `id` int NOT NULL,
-  `tipo` varchar(15) NOT NULL,
+  `tipo` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tipo_UNIQUE` (`tipo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -469,7 +470,7 @@ DROP TABLE IF EXISTS `tipo_razon`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tipo_razon` (
   `id` int NOT NULL,
-  `tipo` varchar(15) NOT NULL,
+  `tipo` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='		';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -520,4 +521,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-10-10  0:25:12
+-- Dump completed on 2023-10-14 13:04:25

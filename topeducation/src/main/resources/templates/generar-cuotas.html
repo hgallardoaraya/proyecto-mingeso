@@ -7,6 +7,7 @@
     <title>Generar cuotas</title>
 </head>
 <body>
+    <nav th:insert="~{fragments/navbar.html :: navbar}"> </nav>
     <h1 class="text-3xl mb-4 font-bold">Generar cuotas</h1>
     <form id="ingresarRutForm" class="flex flex-col gap-3 w-fit">
         <div class="flex flex-col">
@@ -86,6 +87,10 @@
 
         const rawResponse = await response.json();
 
-        console.log(rawResponse);
+        alert(rawResponse.message);
+
+        if(rawResponse.status === 201){
+            location.reload();
+        }
     }
 </script>

@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado razones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Registrar pago estudiante</title>
 </head>
 <body>
+    <nav th:insert="~{fragments/navbar.html :: navbar}"> </nav>
     <h1>Seleccionar razones estudiante</h1>
     <form id="seleccionarRazonesForm" action="">
         <table>
@@ -61,10 +63,10 @@
             body: JSON.stringify(data)
         })
         const rawResponse = await response.json();
+
         alert(rawResponse.message);
-        if(rawResponse.status === 201){
-            window.location.replace(rawResponse.pathRedirect);
-        }
+
+        location.reload();
     }
 
 </script>

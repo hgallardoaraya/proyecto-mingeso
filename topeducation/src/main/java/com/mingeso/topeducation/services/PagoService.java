@@ -1,6 +1,7 @@
 package com.mingeso.topeducation.services;
 
 import com.mingeso.topeducation.entities.*;
+import com.mingeso.topeducation.exceptions.FechaNoPermitidaException;
 import com.mingeso.topeducation.exceptions.RegistroNoExisteException;
 import com.mingeso.topeducation.exceptions.ValorFueraDeRangoException;
 import com.mingeso.topeducation.repositories.EstadoRazonRepository;
@@ -9,11 +10,14 @@ import com.mingeso.topeducation.repositories.PagoRepository;
 import com.mingeso.topeducation.repositories.RazonRepository;
 import com.mingeso.topeducation.requests.RegistrarPagoRequest;
 import com.mingeso.topeducation.utils.EntradaReporteResumen;
+import com.mingeso.topeducation.utils.Util;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,15 +38,13 @@ public class PagoService {
 
     //Existe un pago que contiene todas las razones que se desean pagar.
     @Transactional
-    public Pago registrarPago(RegistrarPagoRequest request) {
+    public Pago registrarPago(RegistrarPagoRequest request, LocalDate fechaActual) {
+        if(fechaActual.isBefore(Util.obtenerFechaInicioProceso(fechaActual))) throw new FechaNoPermitidaException("No está permitido pagar fuera del rango del 5 y el 10 de cada mes.");
         Pago pago = new Pago();
 
         Optional<Estudiante> estudiante = estudianteRepository.findByRut(request.getRut());
         if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante con rut " + request.getRut() + " no existe.");
         pago.setEstudiante(estudiante.get());
-
-        // Obtén la fecha actual
-        LocalDate fechaActual = LocalDate.now();
 
         List<Razon> razones = new ArrayList<>();
         Integer total = 0;
@@ -68,8 +70,11 @@ public class PagoService {
         return pagoRepository.save(pago);
     }
 
-    public ArrayList<Razon> obtenerRazonesAPagar(String rut) {
-        return razonRepository.findCuotasAPagarByRut(rut);
+    public List<Razon> obtenerRazonesAPagar(String rut, LocalDate fechaActual) {
+        System.out.println(fechaActual);
+        System.out.println(Util.obtenerFechaInicioProceso(fechaActual));
+        if(fechaActual.isBefore(Util.obtenerFechaInicioProceso(fechaActual))) throw new FechaNoPermitidaException("No está permitido pagar fuera del rango del 5 y el 10 de cada mes.");
+        return razonRepository.findCuotasAPagarByRutAndDate(rut, Util.obtenerFechaInicioProceso(fechaActual));
     }
 
     /*▪ RUT estudiante <Listo>
@@ -98,7 +103,7 @@ public class PagoService {
                     .promedioExamenes(examenes == null ? 0 : calcularPromedioExamenes(examenes))
                     .totalArancel(calcularTotalArancel(razones))
                     .tipoPago(estudiante.getTipoPagoArancel().getTipo())
-                    .numeroCuotasPactadas(calcularNumeroCuotasPactadas(razones))
+                    .numeroCuotasPactadas(estudiante.getCuotasPactadas())
                     .numeroCuotasPagadas(calcularNumeroCuotasPagadas(razones))
                     .arancelPagado(calcularArancelPagado(razones))
                     .totalPagado(calcularTotalPagado(razones))
@@ -197,17 +202,6 @@ public class PagoService {
             }
         }
         return numeroCuotasPagadas;
-    }
-
-    private int calcularNumeroCuotasPactadas(List<Razon> razones){
-        int numeroCuotasPactadas = 0;
-        int anioActual = LocalDate.now().getYear();
-        for(Razon razon : razones){
-            if((razon.getTipo().getId() == 1) && (razon.getFechaInicio().getYear() == anioActual)){
-                numeroCuotasPactadas += 1;
-            }
-        }
-        return numeroCuotasPactadas;
     }
 
     private int calcularTotalArancel(List<Razon> razones){

@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Registrar pago estudiante</title>
+    <title>Calcular planilla</title>
 </head>
 <body>
+<nav th:insert="~{fragments/navbar.html :: navbar}"> </nav>
 <h1 class="text-3xl mb-4 font-bold">Registrar pago estudiante</h1>
+<span th:text="${message == null} ? '' : ${message}"></span>
 <form class="flex flex-col gap-3 w-fit" th:action="@{/razones/planilla}" method="POST">
     <p class="text-gray-900">
         Atención!, esta acción solo se puede realizar una vez antes de cada proceso de pago de arancel.

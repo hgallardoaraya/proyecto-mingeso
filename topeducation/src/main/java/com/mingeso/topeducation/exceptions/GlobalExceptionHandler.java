@@ -26,4 +26,15 @@ public class GlobalExceptionHandler{
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RegistroDuplicadoException.class)
+    public ResponseEntity<Response> handleRegistroDuplicadoException(RegistroDuplicadoException ex){
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RegistrosFaltantesException.class)
+    public ResponseEntity<Response> handleRegistrosFaltantesException(RegistrosFaltantesException ex){
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }
