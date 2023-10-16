@@ -71,8 +71,6 @@ public class PagoService {
     }
 
     public List<Razon> obtenerRazonesAPagar(String rut, LocalDate fechaActual) {
-        System.out.println(fechaActual);
-        System.out.println(Util.obtenerFechaInicioProceso(fechaActual));
         if(fechaActual.isBefore(Util.obtenerFechaInicioProceso(fechaActual))) throw new FechaNoPermitidaException("No está permitido pagar fuera del rango del 5 y el 10 de cada mes.");
         return razonRepository.findCuotasAPagarByRutAndDate(rut, Util.obtenerFechaInicioProceso(fechaActual));
     }
@@ -117,24 +115,38 @@ public class PagoService {
         return reporte;
     }
 
-    private int calcularNumeroCuotasAtrasadas(List<Razon> razones){
-        int numeroCuotasAtrasadas = 0;
+    private int calcularPromedioExamenes(List<Examen> examenes){
+        int promedioExamenes = 0;
+        if(examenes.isEmpty()) return 0;
+        for(Examen examen : examenes){
+            if(examen.getPuntaje() == null) examen.setPuntaje(0);
+            promedioExamenes += examen.getPuntaje();
+        }
+        promedioExamenes /= examenes.size();
+        return promedioExamenes;
+    }
+
+    private int calcularTotalArancel(List<Razon> razones){
+        int totalArancel = 0;
         int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
-            //También se elimina restricción de año
+            //Si es arancel calcular total
             if((razon.getTipo().getId() == 1)
-                    && (razon.getEstado().getId() == 2)){
-                numeroCuotasAtrasadas += 1;
+                    && ((razon.getFechaInicio().getYear() == anioActual)
+                        || ((razon.getFechaInicio().getYear() - anioActual) == 1
+                        && razon.getFechaInicio().getMonth().equals(Month.JANUARY)))
+            ){
+                totalArancel += razon.getMonto();
             }
         }
-        return numeroCuotasAtrasadas;
+        return totalArancel;
     }
 
     private int calcularTotalPendiente(List<Razon> razones){
         int totalPendiente = 0;
-        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             //Acá no hay restricción de año ya que puede ser un arancel con interes acumulado de años con una deuda millonaria :p.
+            //se busca todos los pendientes y atrasados
             if(((razon.getEstado().getId() == 1) || (razon.getEstado().getId() == 2))){
                 totalPendiente += razon.getMonto();
             }
@@ -144,7 +156,6 @@ public class PagoService {
 
     private int calcularArancelPendiente(List<Razon> razones){
         int arancelPendiente = 0;
-        int anioActual = LocalDate.now().getYear();
         for(Razon razon : razones){
             //Acá no hay restricción de año ya que puede ser un arancel con interes acumulado de años con una deuda millonaria :p.
             if((razon.getTipo().getId() == 1)
@@ -153,6 +164,50 @@ public class PagoService {
             }
         }
         return arancelPendiente;
+    }
+
+    private int calcularTotalPagado(List<Razon> razones){
+        int totalPagado = 0;
+        int anioActual = LocalDate.now().getYear();
+        for(Razon razon : razones){
+            if(((razon.getFechaInicio().getYear() == anioActual)
+                    || ((razon.getFechaInicio().getYear() - anioActual) == 1
+                    && razon.getFechaInicio().getMonth().equals(Month.JANUARY)))
+                    && (razon.getEstado().getId() == 0)){
+                totalPagado += razon.getMonto();
+            }
+        }
+        return totalPagado;
+    }
+
+    private int calcularArancelPagado(List<Razon> razones){
+        int arancelPagado = 0;
+        int anioActual = LocalDate.now().getYear();
+        for(Razon razon : razones){
+            if((razon.getTipo().getId() == 1)
+                    && ((razon.getFechaInicio().getYear() == anioActual)
+                        || ((razon.getFechaInicio().getYear() - anioActual) == 1
+                        && razon.getFechaInicio().getMonth().equals(Month.JANUARY)))
+                    && (razon.getEstado().getId() == 0)){
+                arancelPagado += razon.getMonto();
+            }
+        }
+        return arancelPagado;
+    }
+
+    private int calcularNumeroCuotasPagadas(List<Razon> razones){
+        int numeroCuotasPagadas = 0;
+        int anioActual = LocalDate.now().getYear();
+        for(Razon razon : razones){
+            if((razon.getTipo().getId() == 1)
+                    && ((razon.getFechaInicio().getYear() == anioActual)
+                        || ((razon.getFechaInicio().getYear() - anioActual) == 1
+                        && razon.getFechaInicio().getMonth().equals(Month.JANUARY)))
+                    && (razon.getEstado().getId() == 0)){
+                numeroCuotasPagadas += 1;
+            }
+        }
+        return numeroCuotasPagadas;
     }
 
     private LocalDate calcularFechaUltimoPago(List<Pago> pagos){
@@ -166,65 +221,17 @@ public class PagoService {
         return fechaUltimoPago;
     }
 
-    private int calcularTotalPagado(List<Razon> razones){
-        int totalPagado = 0;
-        int anioActual = LocalDate.now().getYear();
+    private int calcularNumeroCuotasAtrasadas(List<Razon> razones){
+        int numeroCuotasAtrasadas = 0;
         for(Razon razon : razones){
-            if((razon.getFechaInicio().getYear() == anioActual)
-                    && (razon.getEstado().getId() == 0)){
-                totalPagado += razon.getMonto();
-            }
-        }
-        return totalPagado;
-    }
-
-    private int calcularArancelPagado(List<Razon> razones){
-        int arancelPagado = 0;
-        int anioActual = LocalDate.now().getYear();
-        for(Razon razon : razones){
+            //También se elimina restricción de año
             if((razon.getTipo().getId() == 1)
-                    && (razon.getFechaInicio().getYear() == anioActual)
-                    && (razon.getEstado().getId() == 0)){
-                arancelPagado += razon.getMonto();
+                    && (razon.getEstado().getId() == 2)){
+                numeroCuotasAtrasadas += 1;
             }
         }
-        return arancelPagado;
+        return numeroCuotasAtrasadas;
     }
 
-    private int calcularNumeroCuotasPagadas(List<Razon> razones){
-        int numeroCuotasPagadas = 0;
-        int anioActual = LocalDate.now().getYear();
-        for(Razon razon : razones){
-            if((razon.getTipo().getId() == 1)
-                    && (razon.getFechaInicio().getYear() == anioActual)
-                    && (razon.getEstado().getId() == 0)){
-                numeroCuotasPagadas += 1;
-            }
-        }
-        return numeroCuotasPagadas;
-    }
-
-    private int calcularTotalArancel(List<Razon> razones){
-        int totalArancel = 0;
-        int anioActual = LocalDate.now().getYear();
-        for(Razon razon : razones){
-            //Si es arancel calcular total
-            if((razon.getTipo().getId() == 1) && (razon.getFechaInicio().getYear() == anioActual)){
-               totalArancel += razon.getMonto();
-            }
-        }
-        return totalArancel;
-    }
-
-    private int calcularPromedioExamenes(List<Examen> examenes){
-        int promedioExamenes = 0;
-        if(examenes.isEmpty()) return 0;
-        for(Examen examen : examenes){
-            if(examen.getPuntaje() == null) examen.setPuntaje(0);
-            promedioExamenes += examen.getPuntaje();
-        }
-        promedioExamenes /= examenes.size();
-        return promedioExamenes;
-    }
 }
 

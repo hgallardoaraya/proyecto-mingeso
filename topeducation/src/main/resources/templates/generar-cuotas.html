@@ -40,7 +40,7 @@
 
         console.log(rut);
         
-        const response = await fetch(`http://localhost:3000/estudiantes/maxcuotas?rut=${rut}`);
+        const response = await fetch(`/estudiantes/maxcuotas?rut=${rut}`);
 
         const rawResponse = await response.json();
 
@@ -83,7 +83,7 @@
         const rut = document.getElementById("rut").value;
         const numCuotas = document.getElementById("numCuotas").value;
 
-        const response = await fetch(`http://localhost:3000/razones/generar?rut=${rut}&numCuotas=${numCuotas}`, { method: 'POST' });
+        const response = await fetch(`/razones/generar?rut=${rut}&numCuotas=${numCuotas}`, { method: 'POST' });
 
         const rawResponse = await response.json();
 

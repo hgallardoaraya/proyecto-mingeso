@@ -20,17 +20,6 @@ public class EstudianteService {
     @Autowired
     private MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
 
-//    @Autowired
-//    public EstudianteService(EstudianteRepository estudianteRepository,
-//                             TipoColegioRepository tipoColegioRepository,
-//                             TipoPagoArancelRepository tipoPagoArancelRepository,
-//                             MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository){
-//        this.estudianteRepository = estudianteRepository;
-//        this.tipoColegioRepository = tipoColegioRepository;
-//        this.tipoPagoArancelRepository = tipoPagoArancelRepository;
-//        this.maxCuotasTipoColegioRepository = maxCuotasTipoColegioRepository;
-//    }
-
     public Estudiante ingresarEstudiante(IngresarEstudianteRequest request){
         Estudiante estudiante = request.getEstudiante();
         Integer idTipoColegio = request.getIdTipoColegio();

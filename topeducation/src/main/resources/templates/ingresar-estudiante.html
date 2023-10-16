@@ -10,7 +10,7 @@
     <nav th:insert="~{fragments/navbar.html :: navbar}"> </nav>
     <div class="p-3 w-screen h-screen">
         <h1 class="text-3xl mb-4 font-bold">Ingresar estudiante</h1>
-        <form id="ingresarEstudianteForm" class="flex flex-col gap-3 w-fit" action="">
+        <form id="ingresarEstudianteForm" class="flex flex-col gap-3 w-fit">
             <div class="flex flex-col">
                 <label for="nombre1" class="text-gray-950 font-medium">Primer nombre:</label>
                 <input type="text" id="nombre1" name="nombre1" placeholder="Ej: Juán"  class="text-gray-800" required/>
@@ -60,13 +60,13 @@
 
 <script>
     let ingresarEstudianteForm = document.getElementById("ingresarEstudianteForm");
-    
+
     //enviar formulario para ingresar estudiante
     ingresarEstudianteForm.addEventListener("submit", e => enviarEstudianteForm(e))
 
     const enviarEstudianteForm = async (e) => {
         e.preventDefault();
-        
+
         const nombre1 = document.getElementById("nombre1").value;
         const nombre2 = document.getElementById("nombre2").value;
         const apellido1 = document.getElementById("apellido1").value;
@@ -96,16 +96,16 @@
             idTipoColegio,
             idTipoPagoArancel,
             idInteresMesesAtraso
-        }     
+        }
 
 
-        const response = await fetch("http://localhost:3000/estudiantes", {
-            method: 'POST',            
+        const response = await fetch("/estudiantes", {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(requestData)
-        })        
+        })
 
         const rawResponse = await response.json();
 

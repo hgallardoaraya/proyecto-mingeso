@@ -62,12 +62,11 @@ public class RazonService {
     public List<Razon> generarCuotas(String rut, Integer numCuotas){
 
         Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
-
         if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante con rut " + rut + " no existe.");
         if(estudiante.get().getRazones() != null
                 && estudiante.get().getRazones().size() > 0
                 && estudiante.get().getRazones().get(0).getFechaInicio().getYear() == LocalDate.now().getYear()){
-            throw new FechaNoPermitidaException("Ya se generaron las cuotas correspondientes a este año.");
+            throw new FechaNoPermitidaException("Ya se generaron las cuotas correspondientes a este proceso.");
         }
         if(numCuotas < 0) throw new ValorFueraDeRangoException("El número de cuotas es menor a 0.");
         if(numCuotas > maxCuotasTipoColegioRepository.findMaxCuotasByTipoColegio(estudiante.get().getTipoColegio().getId())) throw new ValorFueraDeRangoException("El número de cuotas excede el máximo.");

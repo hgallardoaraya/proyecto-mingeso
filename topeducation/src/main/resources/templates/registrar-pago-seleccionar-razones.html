@@ -55,7 +55,7 @@
         checkedBoxes.forEach(razonInput => idsRazones.push(razonInput.value));
         if(!idsRazones.length > 0) return 0;
         const data = {rut, idsRazones};
-        const response = await fetch("http://localhost:3000/pagos/registrar", {
+        const response = await fetch("/pagos/registrar", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
