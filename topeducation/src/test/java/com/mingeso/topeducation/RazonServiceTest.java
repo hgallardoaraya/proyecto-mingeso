@@ -162,8 +162,8 @@ public class RazonServiceTest {
         List<Examen> resultados = razonService.actualizarRevisionExamenes(examenes);
 
         List<Examen> esperados = List.copyOf(examenes);
-        esperados.get(0).setRevision(true);
-        esperados.get(1).setRevision(true);
+        esperados.get(0).setRevision(1);
+        esperados.get(1).setRevision(1);
 
         assertEquals(esperados, resultados);
     }
@@ -265,14 +265,14 @@ public class RazonServiceTest {
         Examen examenFechaAnterior = new Examen();
         examenFechaAnterior.setId(5);
         examenFechaAnterior.setPuntaje(0);
-        examenFechaAnterior.setRevision(false);
+        examenFechaAnterior.setRevision(0);
         examenFechaAnterior.setFecha(LocalDate.of(2023, Month.APRIL, 27));
         examenes.add(examenFechaAnterior);
 
         Examen examenRevisado = new Examen();
         examenRevisado.setId(6);
         examenRevisado.setPuntaje(0);
-        examenRevisado.setRevision(true);
+        examenRevisado.setRevision(0);
         examenRevisado.setFecha(LocalDate.of(2023, Month.AUGUST, 27));
         examenes.add(examenRevisado);
 
@@ -339,14 +339,14 @@ public class RazonServiceTest {
         Examen examenFechaAnterior = new Examen();
         examenFechaAnterior.setId(5);
         examenFechaAnterior.setPuntaje(0);
-        examenFechaAnterior.setRevision(false);
+        examenFechaAnterior.setRevision(0);
         examenFechaAnterior.setFecha(LocalDate.of(2023, Month.APRIL, 27));
         examenes.add(examenFechaAnterior);
 
         Examen examenRevisado = new Examen();
         examenRevisado.setId(6);
         examenRevisado.setPuntaje(0);
-        examenRevisado.setRevision(true);
+        examenRevisado.setRevision(0);
         examenRevisado.setFecha(LocalDate.of(2023, Month.AUGUST, 27));
         examenes.add(examenRevisado);
 
@@ -462,25 +462,25 @@ public class RazonServiceTest {
         Examen examen1 = new Examen();
         examen1.setId(0);
         examen1.setPuntaje(900);
-        examen1.setRevision(false);
+        examen1.setRevision(0);
         examen1.setFecha(LocalDate.of(2023, Month.SEPTEMBER, 29));
 
         Examen examen2 = new Examen();
         examen2.setId(1);
         examen2.setPuntaje(900);
-        examen2.setRevision(false);
+        examen2.setRevision(0);
         examen2.setFecha(LocalDate.of(2023, Month.SEPTEMBER, 29));
 
         Examen examen3 = new Examen();
         examen3.setId(2);
         examen3.setPuntaje(500);
-        examen3.setRevision(false);
+        examen3.setRevision(0);
         examen3.setFecha(LocalDate.of(2023, Month.SEPTEMBER, 29));
 
         Examen examen4 = new Examen();
         examen4.setId(3);
         examen4.setPuntaje(700);
-        examen4.setRevision(false);
+        examen4.setRevision(0);
         examen4.setFecha(LocalDate.of(2023, Month.SEPTEMBER, 29));
 
         examenes.add(examen1);

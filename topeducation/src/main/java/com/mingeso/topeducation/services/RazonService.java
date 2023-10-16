@@ -142,12 +142,12 @@ public class RazonService {
                     + " y el inicio de pago de arancel del proceso "
                     + fechaInicioProceso + ".");
         }
-
         aplicarDescuentosPorPuntajes(fechaActual);
 
         return aplicarInteresesPorMesesAtraso(fechaActual);
     }
 
+    @Transactional
     public Map<String, List<Razon>> aplicarDescuentosPorPuntajes(LocalDate fechaActual){
         List<Examen> examenes = examenRepository.findAllSinRevision();
 
@@ -238,13 +238,13 @@ public class RazonService {
         }
         return rutPuntajes;
     }
-
     public List<Examen> actualizarRevisionExamenes(List<Examen> examenes){
         for(Examen examen : examenes){
-            examen.setRevision(true);
+            System.out.println(examen.getRevision());
+            examen.setRevision(1);
+            System.out.println(examen.getRevision());
             examenRepository.save(examen);
         }
-
         return examenes;
     }
 

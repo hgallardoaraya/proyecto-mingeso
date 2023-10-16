@@ -78,7 +78,7 @@ public class ExamenService {
             if(puntaje < 0 || puntaje > 1000) throw new ValorFueraDeRangoException("El puntaje " + puntaje + " del " +
                     "estudiante con rut " + rut + " está fuera del rango permitido (0-1000).");
             estudiantesImportados.put(rut, true);
-            examenRepository.save(new Examen(fechaLocalDate, puntaje, estudiante.get(), false));
+            examenRepository.save(new Examen(fechaLocalDate, puntaje, estudiante.get(), 0));
         }
     }
 

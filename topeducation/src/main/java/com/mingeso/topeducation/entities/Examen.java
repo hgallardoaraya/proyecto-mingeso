@@ -24,13 +24,13 @@ public class Examen {
     @Column(name = "puntaje")
     Integer puntaje;
     @Column(name = "revision")
-    Boolean revision;
+    int revision;
     @ManyToOne
     @JoinColumn(name="id_estudiante", nullable=false)
     @JsonBackReference(value = "estudiante_examenes")
     Estudiante estudiante;
 
-    public Examen(LocalDate fecha, Integer puntaje, Estudiante estudiante, Boolean revisado){
+    public Examen(LocalDate fecha, Integer puntaje, Estudiante estudiante, int revisado){
         this.fecha = fecha;
         this.puntaje = puntaje;
         this.estudiante = estudiante;
