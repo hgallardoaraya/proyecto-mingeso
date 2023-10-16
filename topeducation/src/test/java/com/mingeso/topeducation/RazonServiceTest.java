@@ -56,6 +56,7 @@ public class RazonServiceTest {
     @InjectMocks
     RazonService razonService;
 
+    @Test
     void generarCuotasTest(){
         Estudiante estudiante = crearEstudiantePorDefecto();
 
@@ -87,7 +88,6 @@ public class RazonServiceTest {
         when(estadoRazonRepository.findById(2)).thenReturn(Optional.of(estadoAtrasada));
         when(razonRepository.save(ArgumentMatchers.any(Razon.class))).thenAnswer(invocation -> invocation.getArgument(0, Razon.class));
 
-
         TipoRazon tipoArancel = new TipoRazon();
         tipoMatricula.setId(1);
         tipoMatricula.setTipo("ARANCEL");
@@ -106,6 +106,16 @@ public class RazonServiceTest {
 
         assertEquals(razonesEsperadas, resultados);
     }
+
+    @Test
+    void generarCuotasEstudianteNoExisteTest(){
+        Estudiante estudiante = crearEstudiantePorDefecto();
+
+        when(estudianteRepository.findByRut(estudiante.getRut())).thenReturn(Optional.empty());
+        assertThrows(RegistroNoExisteException.class, () -> razonService.generarCuotas(estudiante.getRut(), 2));
+
+    }
+
 
     @Test
     void obtenerRazonesTest(){

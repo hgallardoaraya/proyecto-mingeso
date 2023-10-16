@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Controller
@@ -34,7 +35,7 @@ public class ExamenController {
 
     @PostMapping(value = "/importar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> importarExamen(@RequestParam MultipartFile archivo) throws IOException {
-        examenService.importarExamen(archivo);
+        examenService.importarExamen(archivo, LocalDate.now());
 
         return new ResponseEntity<>(
             new Response(
