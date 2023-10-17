@@ -22,7 +22,7 @@ pipeline{
         stage("Build Docker Image"){
             steps{
                 dir("topeducation"){
-                    sh "docker build -t polloh/topeducation_spring:latest ."
+                    sh "docker build -t polloh/topeducation_spring ."
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline{
                         sh "docker login -u polloh -p ${dckpass}"
 
                     }
-                    sh "docker push polloh/topeducation_spring:latest"
+                    sh "docker push polloh/topeducation_spring"
                 }
 
             }
