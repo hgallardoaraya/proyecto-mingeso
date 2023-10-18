@@ -35,6 +35,9 @@
         const rawResponse = await response.json();
         alert(rawResponse.message);
 
+        if(rawResponse.status === 302) {
+            location.href(rawResponse.pathRedirect);
+        }
         if(rawResponse.status === 201){
             location.reload();
         }
