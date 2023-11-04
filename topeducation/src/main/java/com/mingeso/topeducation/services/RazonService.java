@@ -142,6 +142,7 @@ public class RazonService {
                     + " y el inicio de pago de arancel del proceso "
                     + fechaInicioProceso + ".");
         }
+
         aplicarDescuentosPorPuntajes(fechaActual);
 
         return aplicarInteresesPorMesesAtraso(fechaActual);

@@ -47,6 +47,12 @@ public class EstudianteService {
         List<Estudiante> estudiantes = estudianteRepository.findAll();
         return Mapper.estudiantesToEstudiantesDTOS(estudiantes);
     }
+
+    public EstudianteDTO obtenerEstudiantePorRut(String rut) {
+        Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
+        if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante con rut " + rut + " no existe.");
+        return Mapper.estudianteToEstudianteDTO(estudiante.get());
+    }
 }
 
 

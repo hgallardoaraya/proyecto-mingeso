@@ -20,11 +20,9 @@ import java.util.List;
 @RequestMapping("/pagos")
 public class PagoController {
     private final PagoService pagoService;
-    private final LocalDate fechaActual;
 
     @Autowired
     public PagoController(PagoService pagoService){
-        this.fechaActual = LocalDate.now();
         this.pagoService = pagoService;
     }
 

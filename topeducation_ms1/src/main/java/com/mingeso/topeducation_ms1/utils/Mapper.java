@@ -7,26 +7,14 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Mapper {
 
     public static List<EstudianteDTO> estudiantesToEstudiantesDTOS(List<Estudiante> estudiantes){
         List<EstudianteDTO> estudiantesDTOS = new ArrayList<>();
         for(Estudiante estudiante : estudiantes){
-            EstudianteDTO estudianteDTO = EstudianteDTO.builder()
-                .id(estudiante.getId())
-                .rut(estudiante.getRut())
-                .nombre1(estudiante.getNombre1())
-                .nombre2(estudiante.getNombre2())
-                .apellido1(estudiante.getApellido1())
-                .apellido2(estudiante.getApellido2())
-                .fechaNacimiento(estudiante.getFechaNacimiento())
-                .anioEgreso(estudiante.getAnioEgreso())
-                .nombreColegio(estudiante.getNombreColegio())
-                .tipoColegio(estudiante.getTipoColegio().getTipo())
-                .tipoPagoArancel(estudiante.getTipoPagoArancel().getTipo())
-                .build();
-            estudiantesDTOS.add(estudianteDTO);
+            estudiantesDTOS.add(estudianteToEstudianteDTO(estudiante));
         }
         return estudiantesDTOS;
     }
@@ -44,4 +32,19 @@ public class Mapper {
         return estudiante;
     }
 
+    public static EstudianteDTO estudianteToEstudianteDTO(Estudiante estudiante) {
+        return EstudianteDTO.builder()
+                .id(estudiante.getId())
+                .rut(estudiante.getRut())
+                .nombre1(estudiante.getNombre1())
+                .nombre2(estudiante.getNombre2())
+                .apellido1(estudiante.getApellido1())
+                .apellido2(estudiante.getApellido2())
+                .fechaNacimiento(estudiante.getFechaNacimiento())
+                .anioEgreso(estudiante.getAnioEgreso())
+                .nombreColegio(estudiante.getNombreColegio())
+                .tipoColegio(estudiante.getTipoColegio().getTipo())
+                .tipoPagoArancel(estudiante.getTipoPagoArancel().getTipo())
+                .build();
+    }
 }
