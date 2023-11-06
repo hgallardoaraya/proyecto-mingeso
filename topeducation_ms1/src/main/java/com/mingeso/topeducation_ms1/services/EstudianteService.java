@@ -43,15 +43,22 @@ public class EstudianteService {
         return estudianteRepository.save(estudiante);
     }
 
-    public List<EstudianteDTO> obtenerDatosEstudiantes() {
+    public List<Estudiante> obtenerDatosEstudiantes() {
         List<Estudiante> estudiantes = estudianteRepository.findAll();
-        return Mapper.estudiantesToEstudiantesDTOS(estudiantes);
+        return estudiantes;
     }
 
-    public EstudianteDTO obtenerEstudiantePorRut(String rut) {
+    public Estudiante obtenerEstudiantePorRut(String rut) {
         Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
         if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante con rut " + rut + " no existe.");
-        return Mapper.estudianteToEstudianteDTO(estudiante.get());
+        return estudiante.get();
+    }
+
+    public Estudiante actualizarCuotasPactadas(Integer idEstudiante, Integer cuotasPactadas) {
+        Optional<Estudiante> estudiante = estudianteRepository.findById(idEstudiante);
+        if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante consultado no existe.");
+        estudiante.get().setCuotasPactadas(cuotasPactadas);
+        return estudianteRepository.save(estudiante.get());
     }
 }
 

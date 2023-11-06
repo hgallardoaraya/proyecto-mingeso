@@ -38,4 +38,14 @@ public class Razon {
     @ManyToMany(mappedBy = "razones")
     @JsonBackReference
     Set<Pago> pagos;
+
+    public Razon(Integer numero, Integer monto, LocalDate fechaInicio, LocalDate fechaFin, TipoRazon tipo, EstadoRazon estado, Integer idEstudiante){
+        this.numero = numero;
+        this.monto = monto;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.tipo = tipo;
+        this.estado = estado;
+        this.idEstudiante = idEstudiante;
+    }
 }

@@ -61,6 +61,7 @@ public class PagoService {
             razonRepository.save(razon.get());
             total += razon.get().getMonto();
         }
+
         if(razones.isEmpty()) throw new RegistroNoExisteException("No se indicaron o no existen razones.");
 
         pago.setRazones(razones);

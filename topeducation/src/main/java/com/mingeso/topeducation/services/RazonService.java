@@ -32,18 +32,18 @@ public class RazonService {
 
     @Autowired
     RazonService(RazonRepository razonRepository,
-                 TipoRazonRepository tipoRazonRepository,
-                 EstadoRazonRepository estadoRazonRepository,
-                 EstudianteRepository estudianteRepository,
-                 TotalRazonRepository totalRazonRepository,
-                 DescuentoTipoPagoArancelRepository descuentoTipoPagoArancelRepository,
-                 DescuentoTipoColegioRepository descuentoTipoColegioRepository,
-                 DescuentoAnioEgresoRepository descuentoAnioEgresoRepository,
-                 DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository,
-                 InteresMesesAtrasoRepository interesMesesAtrasoRepository,
-                 ExamenRepository examenRepository,
-                 MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository
-                 ){
+         TipoRazonRepository tipoRazonRepository,
+         EstadoRazonRepository estadoRazonRepository,
+         EstudianteRepository estudianteRepository,
+         TotalRazonRepository totalRazonRepository,
+         DescuentoTipoPagoArancelRepository descuentoTipoPagoArancelRepository,
+         DescuentoTipoColegioRepository descuentoTipoColegioRepository,
+         DescuentoAnioEgresoRepository descuentoAnioEgresoRepository,
+         DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository,
+         InteresMesesAtrasoRepository interesMesesAtrasoRepository,
+         ExamenRepository examenRepository,
+         MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository
+     ){
         this.razonRepository = razonRepository;
         this.tipoRazonRepository = tipoRazonRepository;
         this.estadoRazonRepository = estadoRazonRepository;
@@ -60,7 +60,6 @@ public class RazonService {
 
     @Transactional
     public List<Razon> generarCuotas(String rut, Integer numCuotas){
-
         Optional<Estudiante> estudiante = estudianteRepository.findByRut(rut);
         if(estudiante.isEmpty()) throw new RegistroNoExisteException("El estudiante con rut " + rut + " no existe.");
         if(estudiante.get().getRazones() != null

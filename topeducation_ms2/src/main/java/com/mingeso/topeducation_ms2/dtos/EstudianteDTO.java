@@ -18,7 +18,8 @@ public class EstudianteDTO {
     String apellido2;
     LocalDate fechaNacimiento;
     Integer anioEgreso;
+    Integer cuotasPactadas;
     String nombreColegio;
-    String tipoColegio;
-    String tipoPagoArancel;
+    TipoColegioDTO tipoColegio;
+    TipoPagoArancelDTO tipoPagoArancel;
 }

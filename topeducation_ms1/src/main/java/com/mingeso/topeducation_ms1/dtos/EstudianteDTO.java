@@ -1,5 +1,7 @@
 package com.mingeso.topeducation_ms1.dtos;
 
+import com.mingeso.topeducation_ms1.entities.TipoColegio;
+import com.mingeso.topeducation_ms1.entities.TipoPagoArancel;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDate;
@@ -16,7 +18,8 @@ public class EstudianteDTO {
     String apellido2;
     LocalDate fechaNacimiento;
     Integer anioEgreso;
+    Integer cuotasPactadas;
     String nombreColegio;
-    String tipoColegio;
-    String tipoPagoArancel;
+    TipoColegio tipoColegio;
+    TipoPagoArancel tipoPagoArancel;
 }

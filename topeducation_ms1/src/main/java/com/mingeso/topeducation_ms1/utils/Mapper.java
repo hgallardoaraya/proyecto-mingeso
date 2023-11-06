@@ -43,8 +43,9 @@ public class Mapper {
                 .fechaNacimiento(estudiante.getFechaNacimiento())
                 .anioEgreso(estudiante.getAnioEgreso())
                 .nombreColegio(estudiante.getNombreColegio())
-                .tipoColegio(estudiante.getTipoColegio().getTipo())
-                .tipoPagoArancel(estudiante.getTipoPagoArancel().getTipo())
+                .cuotasPactadas(estudiante.getCuotasPactadas())
+                .tipoColegio(estudiante.getTipoColegio())
+                .tipoPagoArancel(estudiante.getTipoPagoArancel())
                 .build();
     }
 }
