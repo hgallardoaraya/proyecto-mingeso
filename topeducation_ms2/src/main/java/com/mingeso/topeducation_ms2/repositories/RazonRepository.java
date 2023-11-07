@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface RazonRepository extends JpaRepository<Razon, Integer> {
@@ -18,4 +19,9 @@ public interface RazonRepository extends JpaRepository<Razon, Integer> {
             @Param("id_estudiante") Integer idEstudiante,
             @Param("fecha_inicio_proceso_anual") LocalDate fechaInicioProcesoAnual,
             @Param("fecha_fin_proceso_anual") LocalDate fechaFinProcesoAnual);
+
+    @Query("SELECT r " +
+            "FROM Razon r " +
+            "WHERE r.idEstudiante = :id_estudiante")
+    List<Razon> findAllByIdEstudiante(@Param("id_estudiante") Integer idEstudiante);
 }

@@ -1,5 +1,6 @@
-package com.mingeso.topeducation_ms2.dtos;
+package com.mingeso.topeducation_ms2.dtos.razones;
 
+import com.mingeso.topeducation_ms2.dtos.Response;
 import com.mingeso.topeducation_ms2.entities.Razon;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,5 @@
 package com.mingeso.topeducation_ms1.services;
 
-import com.mingeso.topeducation_ms1.dtos.EstudianteDTO;
 import com.mingeso.topeducation_ms1.dtos.IngresarEstudianteDTO;
 import com.mingeso.topeducation_ms1.entities.Estudiante;
 import com.mingeso.topeducation_ms1.entities.TipoColegio;
@@ -43,7 +42,7 @@ public class EstudianteService {
         return estudianteRepository.save(estudiante);
     }
 
-    public List<Estudiante> obtenerDatosEstudiantes() {
+    public List<Estudiante> obtenerEstudiantes() {
         List<Estudiante> estudiantes = estudianteRepository.findAll();
         return estudiantes;
     }

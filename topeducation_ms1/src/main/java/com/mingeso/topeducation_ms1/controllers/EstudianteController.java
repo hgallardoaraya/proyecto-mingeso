@@ -1,7 +1,7 @@
 package com.mingeso.topeducation_ms1.controllers;
 
-import com.mingeso.topeducation_ms1.dtos.EstudianteDTO;
 import com.mingeso.topeducation_ms1.dtos.EstudianteResponse;
+import com.mingeso.topeducation_ms1.dtos.EstudiantesResponse;
 import com.mingeso.topeducation_ms1.dtos.IngresarEstudianteDTO;
 import com.mingeso.topeducation_ms1.dtos.Response;
 import com.mingeso.topeducation_ms1.entities.Estudiante;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -58,10 +57,10 @@ public class EstudianteController {
 
     @RequestMapping(method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> obtenerDatosEstudiantes() {
-        List<Estudiante> estudiantes = estudianteService.obtenerDatosEstudiantes();
+    public ResponseEntity<EstudiantesResponse> obtenerEstudiantes() {
+        List<Estudiante> estudiantes = estudianteService.obtenerEstudiantes();
         return new ResponseEntity<>(
-                new Response(
+                new EstudiantesResponse(
                         HttpStatus.OK.value(),
                         "Estudiantes obtenidos correctamente.",
                         Mapper.estudiantesToEstudiantesDTOS(estudiantes)

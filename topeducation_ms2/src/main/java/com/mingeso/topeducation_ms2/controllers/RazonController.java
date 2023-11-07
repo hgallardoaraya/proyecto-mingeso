@@ -1,17 +1,14 @@
 package com.mingeso.topeducation_ms2.controllers;
 
 
-import com.mingeso.topeducation_ms2.dtos.RazonesResponse;
-import com.mingeso.topeducation_ms2.dtos.Response;
+import com.mingeso.topeducation_ms2.dtos.razones.RazonesResponse;
 import com.mingeso.topeducation_ms2.entities.Razon;
 import com.mingeso.topeducation_ms2.services.RazonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,6 +20,22 @@ public class RazonController {
     @Autowired
     public RazonController(RazonService razonService){
         this.razonService = razonService;
+    }
+
+    @RequestMapping(params="rut",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RazonesResponse> obtenerRazones(@RequestParam String rut){
+        List<Razon> razones = razonService.obtenerRazones(rut);
+
+        return new ResponseEntity<>(
+                new RazonesResponse(
+                        HttpStatus.OK.value(),
+                        "Razones obtenidas correctamente",
+                        razones
+                ),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping

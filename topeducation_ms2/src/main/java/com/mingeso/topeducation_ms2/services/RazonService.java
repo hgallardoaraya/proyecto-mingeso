@@ -1,6 +1,6 @@
 package com.mingeso.topeducation_ms2.services;
 
-import com.mingeso.topeducation_ms2.dtos.EstudianteDTO;
+import com.mingeso.topeducation_ms2.dtos.estudiantes.EstudianteDTO;
 import com.mingeso.topeducation_ms2.entities.EstadoRazon;
 import com.mingeso.topeducation_ms2.entities.Razon;
 import com.mingeso.topeducation_ms2.entities.TipoRazon;
@@ -129,5 +129,10 @@ public class RazonService {
 
         //Aplicar porcentaje descuentos
         return totalArancel - ((totalArancel * porcentajeDescuento) / 100);
+    }
+
+    public List<Razon> obtenerRazones(String rut) {
+        EstudianteDTO estudiante = estudianteService.obtenerEstudiantePorRut(rut);
+        return razonRepository.findAllByIdEstudiante(estudiante.getId());
     }
 }

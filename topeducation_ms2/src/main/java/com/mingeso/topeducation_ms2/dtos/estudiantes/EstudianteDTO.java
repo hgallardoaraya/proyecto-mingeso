@@ -1,8 +1,8 @@
-package com.mingeso.topeducation_ms2.dtos;
+package com.mingeso.topeducation_ms2.dtos.estudiantes;
 
-import lombok.Builder;
+import com.mingeso.topeducation_ms2.dtos.tipo_colegio.TipoColegioDTO;
+import com.mingeso.topeducation_ms2.dtos.tipo_pago_arancel.TipoPagoArancelDTO;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;

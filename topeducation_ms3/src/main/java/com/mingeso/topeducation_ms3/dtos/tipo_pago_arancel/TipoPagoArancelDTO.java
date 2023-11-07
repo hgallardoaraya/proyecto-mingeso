@@ -1,4 +1,4 @@
-package com.mingeso.topeducation_ms2.dtos;
+package com.mingeso.topeducation_ms3.dtos.tipo_pago_arancel;
 
 import lombok.Data;
 

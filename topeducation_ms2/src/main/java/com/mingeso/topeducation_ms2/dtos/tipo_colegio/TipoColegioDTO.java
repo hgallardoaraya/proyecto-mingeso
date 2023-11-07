@@ -1,4 +1,4 @@
-package com.mingeso.topeducation_ms2.dtos;
+package com.mingeso.topeducation_ms2.dtos.tipo_colegio;
 
 import lombok.Data;
 
