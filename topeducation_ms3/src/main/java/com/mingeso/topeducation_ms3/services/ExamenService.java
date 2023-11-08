@@ -1,9 +1,8 @@
 package com.mingeso.topeducation_ms3.services;
 
 
-import com.mingeso.topeducation_ms3.dtos.estudiantes.EstudianteDTO;
+import com.mingeso.topeducation_ms3.dtos.estudiante.EstudianteDTO;
 import com.mingeso.topeducation_ms3.entities.Examen;
-import com.mingeso.topeducation_ms3.exceptions.FechaNoPermitidaException;
 import com.mingeso.topeducation_ms3.exceptions.RegistroNoExisteException;
 import com.mingeso.topeducation_ms3.exceptions.RegistrosFaltantesException;
 import com.mingeso.topeducation_ms3.exceptions.ValorFueraDeRangoException;

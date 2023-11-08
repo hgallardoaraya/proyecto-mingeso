@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: topeducation_ms1
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8084
+  datasource:
+    url: jdbc:mysql://localhost:3306/topeducation_db_1
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update

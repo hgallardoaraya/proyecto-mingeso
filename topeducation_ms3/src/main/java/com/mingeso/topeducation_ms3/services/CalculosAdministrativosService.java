@@ -1,40 +1,47 @@
 package com.mingeso.topeducation_ms3.services;
 
-import com.mingeso.topeducation_ms3.dtos.razones.RazonDTO;
-import com.mingeso.topeducation_ms3.entities.DescuentoPuntajePrueba;
+import com.mingeso.topeducation_ms3.dtos.estudiante.EstudianteDTO;
+import com.mingeso.topeducation_ms3.dtos.pago.PagoDTO;
+import com.mingeso.topeducation_ms3.dtos.pago.PagosResponse;
+import com.mingeso.topeducation_ms3.dtos.razon.RazonDTO;
+import com.mingeso.topeducation_ms3.dtos.reporte.EntradaReporteResumen;
 import com.mingeso.topeducation_ms3.entities.Examen;
-import com.mingeso.topeducation_ms3.exceptions.FechaNoPermitidaException;
 import com.mingeso.topeducation_ms3.exceptions.RegistroNoExisteException;
 import com.mingeso.topeducation_ms3.repositories.DescuentoPuntajePruebaRepository;
 import com.mingeso.topeducation_ms3.repositories.ExamenRepository;
 import com.mingeso.topeducation_ms3.utils.Util;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class CalculosAdministrativosService {
     ExamenRepository examenRepository;
     DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository;
     RazonService razonService;
+    EstudianteService estudianteService;
+    PagoService pagoService;
 
     @Autowired
     public CalculosAdministrativosService(
             ExamenRepository examenRepository,
             DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository,
-            RazonService razonService
+            RazonService razonService,
+            EstudianteService estudianteService,
+            PagoService pagoService
             ){
         this.examenRepository = examenRepository;
         this.descuentoPuntajePruebaRepository = descuentoPuntajePruebaRepository;
         this.razonService = razonService;
+        this.estudianteService = estudianteService;
+        this.pagoService = pagoService;
     }
 
     @Transactional
@@ -141,4 +148,166 @@ public class CalculosAdministrativosService {
         examenRepository.saveAll(examenes);
     }
 
+    public List<EntradaReporteResumen> calcularReporteResumen(){
+        List<EntradaReporteResumen> reporte = new ArrayList<>();
+        List<EstudianteDTO> estudiantes = estudianteService.obtenerEstudiantes();
+        if(estudiantes.isEmpty()) throw new RegistroNoExisteException("No existen estudiantes registrados.");
+        List<RazonDTO> razones = razonService.obtenerRazones();
+        List<PagoDTO> pagos = pagoService.obtenerPagos();
+        List<Examen> examenes = examenRepository.findAll();
+
+        for(EstudianteDTO estudiante : estudiantes){
+            List<RazonDTO> razonesEstudiante = razones
+                    .stream()
+                    .filter(razon -> razon.getIdEstudiante().equals(estudiante.getId()))
+                    .toList();
+
+            List<PagoDTO> pagosEstudiante = pagos
+                    .stream()
+                    .filter(pago -> pago.getIdEstudiante().equals(estudiante.getId()))
+                    .toList();
+
+            List<Examen> examenesEstudiante = examenes
+                    .stream()
+                    .filter(examen -> examen.getIdEstudiante().equals(estudiante.getId()))
+                    .toList();
+
+            EntradaReporteResumen entrada = EntradaReporteResumen.builder()
+                    .rut(estudiante.getRut())
+                    .numeroExamenesRendidos(examenes.size())
+                    .promedioExamenes(calcularPromedioExamenes(examenes))
+                    .totalArancel(calcularTotalArancel(razonesEstudiante))
+                    .tipoPago(estudiante.getTipoPagoArancel().getTipo())
+                    .numeroCuotasPactadas(estudiante.getCuotasPactadas())
+                    .numeroCuotasPagadas(calcularNumeroCuotasPagadas(razonesEstudiante))
+                    .arancelPagado(calcularArancelPagado(razonesEstudiante))
+                    .totalPagado(calcularTotalPagado(razonesEstudiante))
+                    .fechaUltimoPago(calcularFechaUltimoPago(pagosEstudiante))
+                    .saldoArancelPendiente(calcularArancelPendiente(razonesEstudiante))
+                    .saldoTotalPendiente(calcularTotalPendiente(razonesEstudiante))
+                    .numeroCuotasAtrasadas(calcularNumeroCuotasAtrasadas(razonesEstudiante))
+                    .build();
+            reporte.add(entrada);
+        }
+        return reporte;
+    }
+
+
+    private int calcularPromedioExamenes(List<Examen> examenes){
+        int promedioExamenes = 0;
+        if(examenes.isEmpty()) return 0;
+        for(Examen examen : examenes){
+            if(examen.getPuntaje() == null) examen.setPuntaje(0);
+            promedioExamenes += examen.getPuntaje();
+        }
+        promedioExamenes /= examenes.size();
+        return promedioExamenes;
+    }
+
+    private int calcularTotalArancel(List<RazonDTO> razones){
+        int totalArancel = 0;
+        int anioActual = LocalDate.now().getYear();
+        for(RazonDTO razon : razones){
+            //Si es arancel calcular total
+            if((razon.getTipo().getId() == 2)
+                    && ((razon.getFechaInicio().getYear() == anioActual)
+                    || ((razon.getFechaInicio().getYear() - anioActual) == 1
+                    && razon.getFechaInicio().getMonth().equals(Month.JANUARY)))
+            ){
+                totalArancel += razon.getMonto();
+            }
+        }
+        return totalArancel;
+    }
+
+    private int calcularTotalPendiente(List<RazonDTO> razones){
+        int totalPendiente = 0;
+        for(RazonDTO razon : razones){
+            //Acá no hay restricción de año ya que puede ser un arancel con interes acumulado de años con una deuda millonaria :p.
+            //se busca todos los pendientes y atrasados
+            if(((razon.getEstado().getId() == 2) || (razon.getEstado().getId() == 3))){
+                totalPendiente += razon.getMonto();
+            }
+        }
+        return totalPendiente;
+    }
+
+    private int calcularArancelPendiente(List<RazonDTO> razones){
+        int arancelPendiente = 0;
+        for(RazonDTO razon : razones){
+            //Acá no hay restricción de año ya que puede ser un arancel con interes acumulado de años con una deuda millonaria :p.
+            if((razon.getTipo().getId() == 2)
+                    && ((razon.getEstado().getId() == 2) || (razon.getEstado().getId() == 3))){
+                arancelPendiente += razon.getMonto();
+            }
+        }
+        return arancelPendiente;
+    }
+
+    private int calcularTotalPagado(List<RazonDTO> razones){
+        int totalPagado = 0;
+        int anioActual = LocalDate.now().getYear();
+        for(RazonDTO razon : razones){
+            if(((razon.getFechaInicio().getYear() == anioActual)
+                    || ((razon.getFechaInicio().getYear() - anioActual) == 1
+                    && razon.getFechaInicio().getMonth().equals(Month.JANUARY)))
+                    && (razon.getEstado().getId() == 1)){
+                totalPagado += razon.getMonto();
+            }
+        }
+        return totalPagado;
+    }
+
+    private int calcularArancelPagado(List<RazonDTO> razones){
+        int arancelPagado = 0;
+        int anioActual = LocalDate.now().getYear();
+        for(RazonDTO razon : razones){
+            if((razon.getTipo().getId() == 2)
+                    && ((razon.getFechaInicio().getYear() == anioActual)
+                    || ((razon.getFechaInicio().getYear() - anioActual) == 1
+                    && razon.getFechaInicio().getMonth().equals(Month.JANUARY)))
+                    && (razon.getEstado().getId() == 1)){
+                arancelPagado += razon.getMonto();
+            }
+        }
+        return arancelPagado;
+    }
+
+    private int calcularNumeroCuotasPagadas(List<RazonDTO> razones){
+        int numeroCuotasPagadas = 0;
+        int anioActual = LocalDate.now().getYear();
+        for(RazonDTO razon : razones){
+            if((razon.getTipo().getId() == 2)
+                    && ((razon.getFechaInicio().getYear() == anioActual)
+                    || ((razon.getFechaInicio().getYear() - anioActual) == 1
+                    && razon.getFechaInicio().getMonth().equals(Month.JANUARY)))
+                    && (razon.getEstado().getId() == 1)){
+                numeroCuotasPagadas += 1;
+            }
+        }
+        return numeroCuotasPagadas;
+    }
+
+    private LocalDate calcularFechaUltimoPago(List<PagoDTO> pagos){
+        if(pagos.size() < 1) return null;
+        LocalDate fechaUltimoPago = pagos.get(0).getFecha();
+        for(PagoDTO pago : pagos){
+            if(pago.getFecha().isAfter(fechaUltimoPago)){
+                fechaUltimoPago = pago.getFecha();
+            }
+        }
+        return fechaUltimoPago;
+    }
+
+    private int calcularNumeroCuotasAtrasadas(List<RazonDTO> razones){
+        int numeroCuotasAtrasadas = 0;
+        for(RazonDTO razon : razones){
+            //También se elimina restricción de año
+            if((razon.getTipo().getId() == 2)
+                    && (razon.getEstado().getId() == 3)){
+                numeroCuotasAtrasadas += 1;
+            }
+        }
+        return numeroCuotasAtrasadas;
+    }
 }

@@ -20,12 +20,14 @@ spring:
         - id: topeducation_ms1
           uri: lb://topeducation_ms1
           predicates:
-            - Path=/**
+            - Path=/estudiantes/**
         - id: topeducation_ms2
           uri: lb://topeducation_ms2
           predicates:
-            - Path=/**
+            - Path=/pagos/**
+            - Path=/razones/**
         - id: topeducation_ms3
           uri: lb://topeducation_ms3
           predicates:
-            - Path=/**
+            - Path=/examenes/**
+            - Path=/calculos/**

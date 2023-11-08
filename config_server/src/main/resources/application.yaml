@@ -1,0 +1,12 @@
+server:
+  port: 8084
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          default-label: main
+          uri: https://github.com/hector-gallard0/proyecto-mingeso
+          search-paths: config_data
+  application:
+    name: config_server

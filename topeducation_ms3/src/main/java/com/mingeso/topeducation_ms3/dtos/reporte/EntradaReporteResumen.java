@@ -1,4 +1,4 @@
-package com.mingeso.topeducation.utils;
+package com.mingeso.topeducation_ms3.dtos.reporte;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

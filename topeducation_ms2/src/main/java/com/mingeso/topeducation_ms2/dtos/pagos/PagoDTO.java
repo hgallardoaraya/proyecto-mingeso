@@ -11,6 +11,7 @@ import java.util.List;
 public class PagoDTO {
     Integer id;
     Integer total;
+    Integer idEstudiante;
     LocalDate fecha;
     List<Integer> idsRazones;
 }

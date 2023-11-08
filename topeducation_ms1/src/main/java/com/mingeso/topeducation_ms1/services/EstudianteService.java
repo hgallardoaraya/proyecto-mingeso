@@ -43,8 +43,7 @@ public class EstudianteService {
     }
 
     public List<Estudiante> obtenerEstudiantes() {
-        List<Estudiante> estudiantes = estudianteRepository.findAll();
-        return estudiantes;
+        return estudianteRepository.findAll();
     }
 
     public Estudiante obtenerEstudiantePorRut(String rut) {

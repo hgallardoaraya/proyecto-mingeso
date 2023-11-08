@@ -1,7 +1,7 @@
 package com.mingeso.topeducation_ms3.services;
 
-import com.mingeso.topeducation_ms3.dtos.estudiantes.EstudianteDTO;
-import com.mingeso.topeducation_ms3.dtos.estudiantes.EstudiantesResponse;
+import com.mingeso.topeducation_ms3.dtos.estudiante.EstudianteDTO;
+import com.mingeso.topeducation_ms3.dtos.estudiante.EstudiantesResponse;
 import com.mingeso.topeducation_ms3.exceptions.ApiErrorException;
 import com.mingeso.topeducation_ms3.exceptions.RegistroNoExisteException;
 import org.springframework.http.HttpStatus;

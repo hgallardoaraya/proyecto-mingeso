@@ -1,7 +1,7 @@
 package com.mingeso.topeducation_ms3.services;
 
-import com.mingeso.topeducation_ms3.dtos.razones.RazonDTO;
-import com.mingeso.topeducation_ms3.dtos.razones.RazonesResponse;
+import com.mingeso.topeducation_ms3.dtos.razon.RazonDTO;
+import com.mingeso.topeducation_ms3.dtos.razon.RazonesResponse;
 import com.mingeso.topeducation_ms3.exceptions.ApiErrorException;
 import com.mingeso.topeducation_ms3.exceptions.RegistroNoExisteException;
 import org.springframework.http.HttpStatus;
@@ -13,17 +13,33 @@ import java.util.List;
 
 @Service
 public class RazonService {
-    WebClient webClient;
+    WebClient razonWebClient;
 
     public RazonService(WebClient.Builder webClientBuilder){
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8002").build();
+        this.razonWebClient = webClientBuilder.baseUrl("http://localhost:8002/razones").build();
+    }
+
+    public List<RazonDTO> obtenerRazones(){
+        RazonesResponse response = this.razonWebClient
+                .get()
+                .retrieve()
+                .bodyToMono(RazonesResponse.class)
+                .onErrorResume(WebClientResponseException.class, ex -> {
+                    if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
+                        throw new RegistroNoExisteException("Razones no encontradas.");
+                    } else {
+                        throw new ApiErrorException("Error al obtener las razones.");
+                    }
+                })
+                .block();
+        if(response == null) throw new ApiErrorException("Error al obtener las razones.");
+        return response.getRazones();
     }
 
     public List<RazonDTO> obtenerCuotasPendientesYAtrasadasPorIdsEstudiantes(Integer[] idsEstudiantes){
-        RazonesResponse response = webClient
+        RazonesResponse response = this.razonWebClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/razones")
                         .queryParam("estados", 2, 3)
                         .queryParam("tipos",2)
                         .queryParam("estudiantes", idsEstudiantes)
@@ -44,11 +60,8 @@ public class RazonService {
     }
 
     public List<RazonDTO> actualizarCuotas(List<RazonDTO> razones){
-        RazonesResponse response = webClient
+        RazonesResponse response = this.razonWebClient
                 .put()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/razones")
-                        .build())
                 .bodyValue(razones)
                 .retrieve()
                 .bodyToMono(RazonesResponse.class)

@@ -39,6 +39,10 @@ public class PagoService {
         this.estudianteService = estudianteService;
     }
 
+    public List<Pago> obtenerPagos(){
+        return pagoRepository.findAll();
+    }
+
     @Transactional
     public Pago registrarPago(RegistrarPagoDTO registrarPagoDTO) {
         LocalDate fechaActual = LocalDate.now();
