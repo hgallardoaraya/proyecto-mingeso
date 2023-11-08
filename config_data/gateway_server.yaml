@@ -1,0 +1,31 @@
+server:
+  port: 8080
+  
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: topeducation_ms1
+          uri: lb://topeducation_ms1
+          predicates:
+            - Path=/**
+        - id: topeducation_ms2
+          uri: lb://topeducation_ms2
+          predicates:
+            - Path=/**
+        - id: topeducation_ms3
+          uri: lb://topeducation_ms3
+          predicates:
+            - Path=/**
