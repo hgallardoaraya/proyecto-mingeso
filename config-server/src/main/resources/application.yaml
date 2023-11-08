@@ -7,6 +7,6 @@ spring:
         git:
           default-label: main
           uri: https://github.com/hector-gallard0/proyecto-mingeso
-          search-paths: config_data
+          search-paths: config-data
   application:
-    name: config_server
+    name: config-server
