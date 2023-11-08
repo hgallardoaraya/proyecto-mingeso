@@ -24,10 +24,8 @@ spring:
         - id: topeducation-ms2
           uri: lb://topeducation-ms2
           predicates:
-            - Path=/pagos/**
-            - Path=/razones/**
+            - Path=/pagos/**, /razones/**
         - id: topeducation-ms3
           uri: lb://topeducation-ms3
           predicates:
-            - Path=/examenes/**
-            - Path=/calculos/**
+            - Path=/examenes/**, /calculos/**            
