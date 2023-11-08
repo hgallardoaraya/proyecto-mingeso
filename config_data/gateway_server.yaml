@@ -18,16 +18,16 @@ spring:
           enabled: true
       routes:
         - id: topeducation_ms1
-          uri: lb://topeducation_ms1
+          uri: lb://topeducation-ms1
           predicates:
             - Path=/estudiantes/**
         - id: topeducation_ms2
-          uri: lb://topeducation_ms2
+          uri: lb://topeducation-ms2
           predicates:
             - Path=/pagos/**
             - Path=/razones/**
         - id: topeducation_ms3
-          uri: lb://topeducation_ms3
+          uri: lb://topeducation-ms3
           predicates:
             - Path=/examenes/**
             - Path=/calculos/**
