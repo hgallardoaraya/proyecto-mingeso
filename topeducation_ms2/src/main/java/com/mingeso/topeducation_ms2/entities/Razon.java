@@ -1,12 +1,14 @@
 package com.mingeso.topeducation_ms2.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,15 +31,16 @@ public class Razon {
     Integer idEstudiante;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_razon", referencedColumnName = "id")
-    @JsonManagedReference
+    @JsonManagedReference(value="razon_tipo")
     TipoRazon tipo;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_estado_razon", referencedColumnName = "id")
-    @JsonManagedReference
+    @JsonManagedReference(value="razon_estado")
     EstadoRazon estado;
     @ManyToMany(mappedBy = "razones")
-    @JsonBackReference
-    Set<Pago> pagos;
+    @JsonBackReference(value="pagos_razones")
+    @JsonIgnore
+    List<Pago> pagos;
 
     public Razon(Integer numero, Integer monto, LocalDate fechaInicio, LocalDate fechaFin, TipoRazon tipo, EstadoRazon estado, Integer idEstudiante){
         this.numero = numero;

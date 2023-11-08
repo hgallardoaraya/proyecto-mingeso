@@ -1,6 +1,7 @@
 package com.mingeso.topeducation_ms2.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class TotalRazon {
     Integer total;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_razon", referencedColumnName = "id")
-//    @JsonManagedReference
+    @JsonManagedReference(value = "total_tipo")
     @JsonIgnore
     TipoRazon tipo;
 }

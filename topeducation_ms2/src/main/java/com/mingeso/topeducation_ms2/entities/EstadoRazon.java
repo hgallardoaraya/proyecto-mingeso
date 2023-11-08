@@ -17,6 +17,6 @@ public class EstadoRazon {
     @Column(name = "estado")
     String estado;
     @OneToOne(mappedBy = "estado")
-    @JsonBackReference
+    @JsonBackReference(value="razon_estado")
     Razon razon;
 }

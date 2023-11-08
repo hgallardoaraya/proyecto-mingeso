@@ -17,9 +17,9 @@ public class TipoRazon {
     @Column(name = "tipo")
     String tipo;
     @OneToOne(mappedBy = "tipo")
-    @JsonBackReference
+    @JsonBackReference(value = "razon_tipo")
     Razon razon;
     @OneToOne(mappedBy = "tipo")
-    @JsonBackReference
+    @JsonBackReference(value = "total_tipo")
     TotalRazon totalRazon;
 }

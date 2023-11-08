@@ -29,7 +29,7 @@ public class Pago {
             name = "pago_razon",
             joinColumns = @JoinColumn(name = "id_pago"),
             inverseJoinColumns = @JoinColumn(name = "id_razon"))
-    @JsonManagedReference
+    @JsonManagedReference(value="pagos_razones")
     List<Razon> razones;
 
 }

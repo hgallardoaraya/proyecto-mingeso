@@ -1,6 +1,7 @@
 package com.mingeso.topeducation_ms2.controllers;
 
 
+import com.mingeso.topeducation_ms2.dtos.Response;
 import com.mingeso.topeducation_ms2.dtos.razones.RazonesResponse;
 import com.mingeso.topeducation_ms2.entities.Razon;
 import com.mingeso.topeducation_ms2.services.RazonService;
@@ -22,11 +23,34 @@ public class RazonController {
         this.razonService = razonService;
     }
 
-    @RequestMapping(params="rut",
+    @RequestMapping(
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RazonesResponse> obtenerRazones(@RequestParam String rut){
-        List<Razon> razones = razonService.obtenerRazones(rut);
+    public ResponseEntity<RazonesResponse> obtenerRazones(
+            @RequestParam(value = "estados", required = false) Integer[] estados,
+            @RequestParam(value = "estudiantes", required = false) Integer[] estudiantes,
+            @RequestParam(value = "tipos", required = false) Integer[] tipos
+    ){
+        List<Razon> razones = razonService.obtenerRazones(estados, estudiantes, tipos);
+
+        return new ResponseEntity<>(
+                new RazonesResponse(
+                        HttpStatus.OK.value(),
+                        "Razones obtenidas correctamente",
+                        razones
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    @RequestMapping(
+            params="rut",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RazonesResponse> obtenerRazonesPorRut(
+            @RequestParam String rut
+            ){
+        List<Razon> razones = razonService.obtenerRazonesPorRut(rut);
 
         return new ResponseEntity<>(
                 new RazonesResponse(
@@ -49,6 +73,19 @@ public class RazonController {
                         HttpStatus.CREATED.value(),
                         "Razones generadas correctamente.",
                         razones
+                ),
+                HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<RazonesResponse> actualizarCuotas(@RequestBody List<Razon> razones){
+        List<Razon> razonesResultantes = razonService.actualizarCuotas(razones);
+
+        return new ResponseEntity<>(
+                new RazonesResponse(
+                        HttpStatus.CREATED.value(),
+                        "Razones generadas correctamente.",
+                        razonesResultantes
                 ),
                 HttpStatus.CREATED);
     }

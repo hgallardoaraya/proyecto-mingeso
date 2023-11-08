@@ -24,4 +24,18 @@ public interface RazonRepository extends JpaRepository<Razon, Integer> {
             "FROM Razon r " +
             "WHERE r.idEstudiante = :id_estudiante")
     List<Razon> findAllByIdEstudiante(@Param("id_estudiante") Integer idEstudiante);
+
+    @Query("SELECT r " +
+            "FROM Razon r " +
+            "WHERE (:ids_estados IS NULL OR r.estado.id IN :ids_estados) " +
+            "AND (:ids_estudiantes IS NULL OR r.idEstudiante IN :ids_estudiantes) " +
+            "AND (:ids_tipos IS NULL OR r.tipo.id IN :ids_tipos)")
+    List<Razon> findAllByParams(
+            @Param("ids_estados") Integer[] idsEstados,
+            @Param("ids_estudiantes") Integer[] idsEstudiantes,
+            @Param("ids_tipos") Integer[] idsTipos
+    );
+
+
+
 }

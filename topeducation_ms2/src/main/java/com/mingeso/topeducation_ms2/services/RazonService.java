@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -25,11 +26,8 @@ public class RazonService {
     DescuentoTipoPagoArancelRepository descuentoTipoPagoArancelRepository;
     DescuentoTipoColegioRepository descuentoTipoColegioRepository;
     DescuentoAnioEgresoRepository descuentoAnioEgresoRepository;
-    DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository;
     EstudianteService estudianteService;
     MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository;
-//    ExamenRepository examenRepository;
-//    InteresMesesAtrasoRepository interesMesesAtrasoRepository;
 
     @Autowired
     RazonService(RazonRepository razonRepository,
@@ -39,7 +37,6 @@ public class RazonService {
                  DescuentoTipoPagoArancelRepository descuentoTipoPagoArancelRepository,
                  DescuentoTipoColegioRepository descuentoTipoColegioRepository,
                  DescuentoAnioEgresoRepository descuentoAnioEgresoRepository,
-                 DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository,
                  EstudianteService estudianteService,
                  MaxCuotasTipoColegioRepository maxCuotasTipoColegioRepository
     ){
@@ -50,7 +47,6 @@ public class RazonService {
         this.descuentoTipoPagoArancelRepository = descuentoTipoPagoArancelRepository;
         this.descuentoTipoColegioRepository = descuentoTipoColegioRepository;
         this.descuentoAnioEgresoRepository = descuentoAnioEgresoRepository;
-        this.descuentoPuntajePruebaRepository = descuentoPuntajePruebaRepository;
         this.maxCuotasTipoColegioRepository = maxCuotasTipoColegioRepository;
         this.estudianteService = estudianteService;
     }
@@ -131,8 +127,20 @@ public class RazonService {
         return totalArancel - ((totalArancel * porcentajeDescuento) / 100);
     }
 
-    public List<Razon> obtenerRazones(String rut) {
+    public List<Razon> obtenerRazonesPorRut(String rut) {
         EstudianteDTO estudiante = estudianteService.obtenerEstudiantePorRut(rut);
         return razonRepository.findAllByIdEstudiante(estudiante.getId());
+    }
+
+    public List<Razon> obtenerRazones(Integer[] idsEstados,
+                                      Integer[] idsEstudiantes,
+                                      Integer[] idsTipos
+                                      ) {
+
+        return razonRepository.findAllByParams(idsEstados, idsEstudiantes, idsTipos);
+    }
+
+    public List<Razon> actualizarCuotas(List<Razon> razones) {
+        return razonRepository.saveAll(razones);
     }
 }

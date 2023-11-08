@@ -1,4 +1,4 @@
-package com.mingeso.topeducation_ms2.entities;
+package com.mingeso.topeducation_ms3.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
