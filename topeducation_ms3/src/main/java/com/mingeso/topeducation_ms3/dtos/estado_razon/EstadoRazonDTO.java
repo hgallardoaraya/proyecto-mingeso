@@ -1,4 +1,4 @@
-package com.mingeso.topeducation_ms3.dtos.EstadoRazonDTO;
+package com.mingeso.topeducation_ms3.dtos.estado_razon;
 
 import lombok.Data;
 

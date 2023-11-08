@@ -1,4 +1,4 @@
-package com.mingeso.topeducation_ms3.dtos.estudiantes;
+package com.mingeso.topeducation_ms3.dtos.estudiante;
 
 
 import com.mingeso.topeducation_ms3.dtos.tipo_colegio.TipoColegioDTO;

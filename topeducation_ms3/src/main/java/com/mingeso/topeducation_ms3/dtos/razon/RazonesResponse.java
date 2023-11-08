@@ -1,4 +1,4 @@
-package com.mingeso.topeducation_ms3.dtos.razones;
+package com.mingeso.topeducation_ms3.dtos.razon;
 
 import com.mingeso.topeducation_ms3.dtos.Response;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,6 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
-@AllArgsConstructor
 public class RazonesResponse extends Response {
     List<RazonDTO> razones;
 
