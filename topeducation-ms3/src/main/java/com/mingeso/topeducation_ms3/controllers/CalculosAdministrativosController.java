@@ -1,6 +1,8 @@
 package com.mingeso.topeducation_ms3.controllers;
 
 import com.mingeso.topeducation_ms3.dtos.Response;
+import com.mingeso.topeducation_ms3.dtos.razon.RazonDTO;
+import com.mingeso.topeducation_ms3.dtos.razon.RazonesResponse;
 import com.mingeso.topeducation_ms3.dtos.reporte.EntradaReporteResumen;
 import com.mingeso.topeducation_ms3.dtos.reporte.ReporteResponse;
 import com.mingeso.topeducation_ms3.services.CalculosAdministrativosService;
@@ -28,12 +30,13 @@ public class CalculosAdministrativosController {
     }
 
     @PostMapping("/planilla")
-    public ResponseEntity<Response> calcularPlanilla(){
-        calculosAdministrativosService.calcularPlanilla();
+    public ResponseEntity<RazonesResponse> calcularPlanilla(){
+        List<RazonDTO> razonesResultantes = calculosAdministrativosService.calcularPlanilla();
 
-        return new ResponseEntity<>(new Response(
+        return new ResponseEntity<>(new RazonesResponse(
             HttpStatus.OK.value(),
-            "La planilla ha sido calculada con éxito."
+            "La planilla ha sido calculada con éxito.",
+                razonesResultantes
         ),
             HttpStatus.OK);
     }

@@ -28,15 +28,12 @@ public class EstudianteController {
 
     @PostMapping
     public ResponseEntity<Response> ingresarEstudiante(@RequestBody IngresarEstudianteDTO estudianteDTO) {
-        Estudiante estudiante = estudianteService.ingresarEstudiante(estudianteDTO);
-        Map<String, Estudiante> data = new HashMap<>();
-        data.put("estudiante", estudiante);
+        estudianteService.ingresarEstudiante(estudianteDTO);
+
         return new ResponseEntity<>(
                 new Response(
                         HttpStatus.CREATED.value(),
-                        "Estudiante ingresado correctamente.",
-                        "/estudiantes/ingresar",
-                        data
+                        "Estudiante ingresado correctamente."
                 ),
                 HttpStatus.CREATED);
     }
@@ -59,12 +56,11 @@ public class EstudianteController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EstudiantesResponse> obtenerEstudiantes() {
         List<Estudiante> estudiantes = estudianteService.obtenerEstudiantes();
-        return new ResponseEntity<>(
-                new EstudiantesResponse(
-                        HttpStatus.OK.value(),
-                        "Estudiantes obtenidos correctamente.",
-                        Mapper.estudiantesToEstudiantesDTOS(estudiantes)
-                ),
+        return new ResponseEntity<EstudiantesResponse>(
+                new EstudiantesResponse (
+                    HttpStatus.OK.value(),
+                    "Estudiantes obtenidos correctamente.",
+                    Mapper.estudiantesToEstudiantesDTOS(estudiantes)),
                 HttpStatus.OK);
     }
 
@@ -73,7 +69,7 @@ public class EstudianteController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EstudianteResponse> actualizarCuotasPactadas(@RequestParam Integer idEstudiante,
-                                                             @RequestParam Integer cuotasPactadas) {
+                                                                       @RequestParam Integer cuotasPactadas) {
         Estudiante estudiante = estudianteService.actualizarCuotasPactadas(idEstudiante, cuotasPactadas);
         return new ResponseEntity<>(
                 new EstudianteResponse(

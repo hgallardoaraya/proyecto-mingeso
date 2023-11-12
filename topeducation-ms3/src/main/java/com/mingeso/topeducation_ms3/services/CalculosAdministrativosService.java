@@ -6,16 +6,20 @@ import com.mingeso.topeducation_ms3.dtos.pago.PagosResponse;
 import com.mingeso.topeducation_ms3.dtos.razon.RazonDTO;
 import com.mingeso.topeducation_ms3.dtos.reporte.EntradaReporteResumen;
 import com.mingeso.topeducation_ms3.entities.Examen;
+import com.mingeso.topeducation_ms3.entities.InteresMesesAtraso;
 import com.mingeso.topeducation_ms3.exceptions.RegistroNoExisteException;
 import com.mingeso.topeducation_ms3.repositories.DescuentoPuntajePruebaRepository;
 import com.mingeso.topeducation_ms3.repositories.ExamenRepository;
+import com.mingeso.topeducation_ms3.repositories.InteresMesesAtrasoRepository;
 import com.mingeso.topeducation_ms3.utils.Util;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +29,7 @@ import java.util.Map;
 public class CalculosAdministrativosService {
     ExamenRepository examenRepository;
     DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository;
+    InteresMesesAtrasoRepository interesMesesAtrasoRepository;
     RazonService razonService;
     EstudianteService estudianteService;
     PagoService pagoService;
@@ -33,19 +38,21 @@ public class CalculosAdministrativosService {
     public CalculosAdministrativosService(
             ExamenRepository examenRepository,
             DescuentoPuntajePruebaRepository descuentoPuntajePruebaRepository,
+            InteresMesesAtrasoRepository interesMesesAtrasoRepository,
             RazonService razonService,
             EstudianteService estudianteService,
             PagoService pagoService
             ){
         this.examenRepository = examenRepository;
         this.descuentoPuntajePruebaRepository = descuentoPuntajePruebaRepository;
+        this.interesMesesAtrasoRepository = interesMesesAtrasoRepository;
         this.razonService = razonService;
         this.estudianteService = estudianteService;
         this.pagoService = pagoService;
     }
 
     @Transactional
-    public void calcularPlanilla(){
+    public List<RazonDTO> calcularPlanilla(){
         LocalDate fechaActual = LocalDate.now();
         LocalDate fechaInicioProceso = Util.obtenerFechaInicioProceso(fechaActual);
         LocalDate fechaExamenesProceso = Util.obtenerFechaExamenesProceso(fechaInicioProceso);
@@ -56,14 +63,15 @@ public class CalculosAdministrativosService {
 //                    + fechaInicioProceso + ".");
 //        }
 
-        aplicarDescuentosPorPuntajes();
+        aplicarDescuentosPorPuntajes(fechaActual);
 
-//        return aplicarInteresesPorMesesAtraso(fechaActual);
+        aplicarInteresesPorMesesAtraso(fechaActual);
+
+        return razonService.obtenerRazones();
     }
 
     @Transactional
-    public void aplicarDescuentosPorPuntajes(){
-        LocalDate fechaActual = LocalDate.now();
+    public void aplicarDescuentosPorPuntajes(LocalDate fechaActual){
         List<Examen> examenes = examenRepository.findAllSinRevision();
 
         if(examenes == null || examenes.isEmpty()){
@@ -116,7 +124,41 @@ public class CalculosAdministrativosService {
 
         razonService.actualizarCuotas(arregloCuotasResultantes);
     }
-//
+
+    public void aplicarInteresesPorMesesAtraso(LocalDate fechaActual){
+        LocalDate fechaInicioProceso = Util.obtenerFechaInicioProceso(fechaActual);
+        List<EstudianteDTO> estudiantes = estudianteService.obtenerEstudiantes();
+        Map<String, List<RazonDTO>> cuotasConInteres = new HashMap<>();
+        List<RazonDTO> razones = razonService.obtenerRazones();
+        List<RazonDTO> razonesActualizadas = new ArrayList<>();
+        for(EstudianteDTO estudiante : estudiantes){
+            List<RazonDTO> razonesEstudiante = razones
+                    .stream()
+                    .filter(razon -> razon.getIdEstudiante().equals(estudiante.getId()))
+                    .toList();
+            //obtener razones que sean de tipo arancel, estén pendientes o atrasadas y que sean anteriores a la fecha del proceso.
+            List<RazonDTO> cuotasArancelPendientesOAtrasadas = razonesEstudiante.stream().filter(razon ->
+                    (razon.getTipo().getId().equals(2))
+                            && (razon.getEstado().getId().equals(2) || razon.getEstado().getId().equals(3))
+            ).toList();
+
+            List<RazonDTO> cuotasArancelAntiguasPendientesOAtrasadas = cuotasArancelPendientesOAtrasadas.stream().filter(razon ->
+                    (razon.getFechaFin().isBefore(fechaInicioProceso))
+            ).toList();
+
+            List<Integer> porcentajesInteres = obtenerPorcentajesInteres(cuotasArancelAntiguasPendientesOAtrasadas, fechaInicioProceso);
+
+            //Aplicar intereses
+            for(RazonDTO cuota : cuotasArancelPendientesOAtrasadas){
+                for(Integer porcentajeInteres : porcentajesInteres){
+                    cuota.setMonto(cuota.getMonto() + ((cuota.getMonto() * porcentajeInteres) / 100));
+                }
+                razonesActualizadas.add(cuota);
+            }
+        }
+        razonService.actualizarCuotas(razonesActualizadas);
+    }
+
     public Map<Integer, List<Integer>> obtenerPuntajesPorId(List<Examen> examenes){
         Map<Integer, List<Integer>> idsPuntajes = new HashMap<>();
 
@@ -146,6 +188,23 @@ public class CalculosAdministrativosService {
             examen.setRevision(1);
         }
         examenRepository.saveAll(examenes);
+    }
+
+    public List<Integer> obtenerPorcentajesInteres(List<RazonDTO> cuotasArancelAntiguasPendientesOAtrasadas, LocalDate fechaInicioProceso){
+        List<Integer> porcentajesInteres = new ArrayList<>();
+
+        for(RazonDTO cuota : cuotasArancelAntiguasPendientesOAtrasadas){
+            //Si está pendiente, pasa a atrasada
+            if(cuota.getEstado().getId() == 2) razonService.actualizarEstadoRazon(cuota.getId(), 3);
+
+            Period periodo = Period.between(cuota.getFechaInicio(), fechaInicioProceso);
+            //usualmente los años son 0 y se reduce a solo la diferencia en meses.
+            Integer mesesAtraso = periodo.getYears() * 12 + periodo.getMonths();
+            Integer porcentajeInteres = interesMesesAtrasoRepository.findInteresByMesesAtraso(mesesAtraso);
+            porcentajesInteres.add(porcentajeInteres);
+        }
+
+        return porcentajesInteres;
     }
 
     public List<EntradaReporteResumen> calcularReporteResumen(){

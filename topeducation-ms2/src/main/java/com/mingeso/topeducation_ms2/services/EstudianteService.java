@@ -14,7 +14,7 @@ public class EstudianteService {
     WebClient webClient;
 
     public EstudianteService(WebClient.Builder webClientBuilder){
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8080/estudiantes").build();
+        this.webClient = webClientBuilder.baseUrl("http://localhost:8081/estudiantes").build();
     }
 
     public EstudianteDTO obtenerEstudiantePorRut(String rut){

@@ -1,10 +1,12 @@
 package com.mingeso.topeducation_ms2.services;
 
 import com.mingeso.topeducation_ms2.dtos.estudiantes.EstudianteDTO;
+import com.mingeso.topeducation_ms2.dtos.razones.ActualizarEstadoRazonDTO;
 import com.mingeso.topeducation_ms2.entities.EstadoRazon;
 import com.mingeso.topeducation_ms2.entities.Razon;
 import com.mingeso.topeducation_ms2.entities.TipoRazon;
 import com.mingeso.topeducation_ms2.exceptions.FechaNoPermitidaException;
+import com.mingeso.topeducation_ms2.exceptions.RegistroNoExisteException;
 import com.mingeso.topeducation_ms2.exceptions.ValorFueraDeRangoException;
 import com.mingeso.topeducation_ms2.repositories.*;
 import jakarta.transaction.Transactional;
@@ -14,8 +16,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RazonService {
@@ -140,7 +142,21 @@ public class RazonService {
         return razonRepository.findAllByParams(idsEstados, idsEstudiantes, idsTipos);
     }
 
-    public List<Razon> actualizarCuotas(List<Razon> razones) {
+    public List<Razon> actualizarRazones(List<Razon> razones) {
         return razonRepository.saveAll(razones);
+    }
+
+    public Razon actualizarEstadoRazon(Integer idRazon, Integer idEstadoRazon) {
+        Optional<Razon> razon = razonRepository.findById(idRazon);
+
+        if(razon.isEmpty()) throw new RegistroNoExisteException("La razon solicitada no existe.");
+
+        Optional<EstadoRazon> estadoNuevo = estadoRazonRepository.findById(idEstadoRazon);
+
+        if(estadoNuevo.isEmpty()) throw new RegistroNoExisteException("El estado nuevo no existe.");
+
+        razon.get().setEstado(estadoNuevo.get());
+
+        return razonRepository.save(razon.get());
     }
 }

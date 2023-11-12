@@ -1,12 +1,14 @@
 package com.mingeso.topeducationms1.dtos;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 public class IngresarEstudianteDTO {
     String rut;
     String nombre1;

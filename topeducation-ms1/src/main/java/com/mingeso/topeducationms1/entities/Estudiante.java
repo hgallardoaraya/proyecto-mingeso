@@ -3,18 +3,22 @@ package com.mingeso.topeducationms1.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "estudiante")
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class Estudiante {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Integer id;
+    int id;
     @Column(name = "rut")
     String rut;
     @Column(name = "nombre1")
@@ -36,11 +40,9 @@ public class Estudiante {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_colegio", referencedColumnName = "id")
     @JsonManagedReference(value = "estudiante_tipoColegio")
-    @JsonIgnore
     TipoColegio tipoColegio;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_pago_arancel", referencedColumnName = "id")
     @JsonManagedReference(value = "estudiante_tipoPagoArancel")
-    @JsonIgnore
     TipoPagoArancel tipoPagoArancel;
 }

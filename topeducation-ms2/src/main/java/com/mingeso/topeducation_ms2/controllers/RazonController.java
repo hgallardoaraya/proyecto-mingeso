@@ -1,7 +1,8 @@
 package com.mingeso.topeducation_ms2.controllers;
 
 
-import com.mingeso.topeducation_ms2.dtos.Response;
+import com.mingeso.topeducation_ms2.dtos.razones.ActualizarEstadoRazonDTO;
+import com.mingeso.topeducation_ms2.dtos.razones.RazonResponse;
 import com.mingeso.topeducation_ms2.dtos.razones.RazonesResponse;
 import com.mingeso.topeducation_ms2.entities.Razon;
 import com.mingeso.topeducation_ms2.services.RazonService;
@@ -78,14 +79,28 @@ public class RazonController {
     }
 
     @PutMapping
-    public ResponseEntity<RazonesResponse> actualizarCuotas(@RequestBody List<Razon> razones){
-        List<Razon> razonesResultantes = razonService.actualizarCuotas(razones);
+    public ResponseEntity<RazonesResponse> actualizarRazones(@RequestBody List<Razon> razones){
+        List<Razon> razonesResultantes = razonService.actualizarRazones(razones);
 
         return new ResponseEntity<>(
                 new RazonesResponse(
                         HttpStatus.CREATED.value(),
                         "Razones generadas correctamente.",
                         razonesResultantes
+                ),
+                HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{idRazon}/estado/{idEstadoRazon}")
+    public ResponseEntity<RazonResponse> actualizarEstadoRazon(@PathVariable Integer idRazon, @PathVariable Integer idEstadoRazon){
+
+        Razon razonResultante = razonService.actualizarEstadoRazon(idRazon, idEstadoRazon);
+
+        return new ResponseEntity<>(
+                new RazonResponse(
+                        HttpStatus.CREATED.value(),
+                        "Estado de la razón actualizado correctamente.",
+                        razonResultante
                 ),
                 HttpStatus.CREATED);
     }

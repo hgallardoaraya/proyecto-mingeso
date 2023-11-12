@@ -16,10 +16,4 @@ public class TipoRazon {
     Integer id;
     @Column(name = "tipo")
     String tipo;
-    @OneToOne(mappedBy = "tipo")
-    @JsonBackReference(value = "razon_tipo")
-    Razon razon;
-    @OneToOne(mappedBy = "tipo")
-    @JsonBackReference(value = "total_tipo")
-    TotalRazon totalRazon;
 }

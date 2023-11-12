@@ -17,7 +17,7 @@ public class PagoService {
     WebClient pagoWebClient;
 
     public PagoService(WebClient.Builder webClientBuilder){
-        this.pagoWebClient = webClientBuilder.baseUrl("http://localhost:8080/pagos").build();
+        this.pagoWebClient = webClientBuilder.baseUrl("http://localhost:8082/pagos").build();
     }
 
     public List<PagoDTO> obtenerPagos(){

@@ -17,29 +17,43 @@ import java.util.Optional;
 
 @Service
 public class EstudianteService {
-    @Autowired
-    private EstudianteRepository estudianteRepository;
-    @Autowired
-    private TipoColegioRepository tipoColegioRepository;
-    @Autowired
-    private TipoPagoArancelRepository tipoPagoArancelRepository;
+    private final EstudianteRepository estudianteRepository;
+    private final TipoColegioRepository tipoColegioRepository;
+    private final TipoPagoArancelRepository tipoPagoArancelRepository;
 
-    public Estudiante ingresarEstudiante(IngresarEstudianteDTO ingresarEstudianteDTO){
+    @Autowired
+    public EstudianteService(EstudianteRepository estudianteRepository,
+                             TipoColegioRepository tipoColegioRepository,
+                             TipoPagoArancelRepository tipoPagoArancelRepository){
+        this.estudianteRepository = estudianteRepository;
+        this.tipoColegioRepository = tipoColegioRepository;
+        this.tipoPagoArancelRepository = tipoPagoArancelRepository;
+    }
+
+    public void ingresarEstudiante(IngresarEstudianteDTO ingresarEstudianteDTO){
         Integer idTipoColegio = ingresarEstudianteDTO.getIdTipoColegio();
         Integer idTipoPagoArancel = ingresarEstudianteDTO.getIdTipoPagoArancel();
 
         Optional<TipoColegio> tipoColegio = tipoColegioRepository.findById(idTipoColegio);
-        if(tipoColegio.isEmpty()) throw new RegistroNoExisteException("El colegio " + idTipoColegio + " no existe.");
+        TipoColegio tipoColegioEntity = tipoColegio.orElseThrow(() -> new RegistroNoExisteException("El colegio " + idTipoColegio + " no existe."));
 
         Optional<TipoPagoArancel> tipoPagoArancel = tipoPagoArancelRepository.findById(idTipoPagoArancel);
-        if(tipoPagoArancel.isEmpty()) throw new RegistroNoExisteException("El tipo de pago arancel " + idTipoPagoArancel + " no existe.");
+        TipoPagoArancel tipoPagoArancelEntity = tipoPagoArancel.orElseThrow(() -> new RegistroNoExisteException("El tipo de pago arancel " + idTipoPagoArancel + " no existe."));
 
-        Estudiante estudiante = Mapper.ingresarEstudianteDTOToEstudianteEntity(ingresarEstudianteDTO);
+        Estudiante estudiante = new Estudiante();
+        estudiante.setRut(ingresarEstudianteDTO.getRut());
+        estudiante.setNombre1(ingresarEstudianteDTO.getNombre1());
+        estudiante.setNombre2(ingresarEstudianteDTO.getNombre2());
+        estudiante.setApellido1(ingresarEstudianteDTO.getApellido1());
+        estudiante.setApellido2(ingresarEstudianteDTO.getApellido2());
+        estudiante.setFechaNacimiento(ingresarEstudianteDTO.getFechaNacimiento());
+        estudiante.setAnioEgreso(ingresarEstudianteDTO.getAnioEgreso());
+        estudiante.setNombreColegio(ingresarEstudianteDTO.getNombreColegio());
         estudiante.setCuotasPactadas(0);
-        estudiante.setTipoColegio(tipoColegio.get());
-        estudiante.setTipoPagoArancel(tipoPagoArancel.get());
+        estudiante.setTipoColegio(tipoColegioEntity);
+        estudiante.setTipoPagoArancel(tipoPagoArancelEntity);
 
-        return estudianteRepository.save(estudiante);
+        estudianteRepository.saveAndFlush(estudiante);
     }
 
     public List<Estudiante> obtenerEstudiantes() {

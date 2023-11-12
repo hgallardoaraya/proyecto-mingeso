@@ -1,6 +1,7 @@
 package com.mingeso.topeducation_ms3.services;
 
 import com.mingeso.topeducation_ms3.dtos.razon.RazonDTO;
+import com.mingeso.topeducation_ms3.dtos.razon.RazonResponse;
 import com.mingeso.topeducation_ms3.dtos.razon.RazonesResponse;
 import com.mingeso.topeducation_ms3.exceptions.ApiErrorException;
 import com.mingeso.topeducation_ms3.exceptions.RegistroNoExisteException;
@@ -16,7 +17,7 @@ public class RazonService {
     WebClient razonWebClient;
 
     public RazonService(WebClient.Builder webClientBuilder){
-        this.razonWebClient = webClientBuilder.baseUrl("http://localhost:8080/razones").build();
+        this.razonWebClient = webClientBuilder.baseUrl("http://localhost:8082/razones").build();
     }
 
     public List<RazonDTO> obtenerRazones(){
@@ -76,5 +77,25 @@ public class RazonService {
         if(response == null) throw new ApiErrorException("Error al obtener las razones.");
         System.out.println(response.getRazones());
         return response.getRazones();
+    }
+
+    public RazonDTO actualizarEstadoRazon(Integer idRazon, Integer idEstadoRazon) {
+        RazonResponse response = this.razonWebClient
+                .put()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/" + idRazon + "/estado/" + idEstadoRazon)
+                        .build())
+                .retrieve()
+                .bodyToMono(RazonResponse.class)
+                .onErrorResume(WebClientResponseException.class, ex -> {
+                    if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
+                        throw new RegistroNoExisteException("Razón no encontrada.");
+                    } else {
+                        throw new ApiErrorException("Error al actualizar el estado de la razón.");
+                    }
+                })
+                .block();
+        if(response == null) throw new ApiErrorException("Error al actualizar el estado de la razón.");
+        return response.getRazon();
     }
 }
