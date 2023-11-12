@@ -1,10 +1,8 @@
+server:
+  port: 8082
 spring:
   application:
     name: topeducation-ms2
-  cloud:
-    config:
-      enabled: true
-      uri: http://localhost:8084
   datasource:
     url: jdbc:mysql://localhost:3307/topeducation_db_2
     username: root
