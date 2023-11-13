@@ -29,7 +29,7 @@ public class RazonController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RazonesResponse> obtenerRazones(
             @RequestParam(value = "estados", required = false) Integer[] estados,
-            @RequestParam(value = "estudiantes", required = false) Integer[] estudiantes,
+            @RequestParam(value = "estudiantes") Integer[] estudiantes,
             @RequestParam(value = "tipos", required = false) Integer[] tipos
     ){
         List<Razon> razones = razonService.obtenerRazones(estados, estudiantes, tipos);
@@ -43,15 +43,16 @@ public class RazonController {
                 HttpStatus.OK
         );
     }
-
     @RequestMapping(
-            params="rut",
+            value = "/estudiantes/{rut}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RazonesResponse> obtenerRazonesPorRut(
-            @RequestParam String rut
+            @PathVariable(value = "rut") String rut,
+            @RequestParam(value = "estados", required = false) Integer[] estados,
+            @RequestParam(value = "tipos", required = false) Integer[] tipos
             ){
-        List<Razon> razones = razonService.obtenerRazonesPorRut(rut);
+        List<Razon> razones = razonService.obtenerRazonesPorRut(rut, estados, tipos);
 
         return new ResponseEntity<>(
                 new RazonesResponse(

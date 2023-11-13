@@ -129,9 +129,14 @@ public class RazonService {
         return totalArancel - ((totalArancel * porcentajeDescuento) / 100);
     }
 
-    public List<Razon> obtenerRazonesPorRut(String rut) {
+    public List<Razon> obtenerRazonesPorRut(String rut,
+                                            Integer[] idsEstados,
+                                            Integer[] idsTipos
+                                            ) {
         EstudianteDTO estudiante = estudianteService.obtenerEstudiantePorRut(rut);
-        return razonRepository.findAllByIdEstudiante(estudiante.getId());
+        Integer[] idsEstudiantes = new Integer[1];
+        idsEstudiantes[0] = estudiante.getId();
+        return razonRepository.findAllByParams(idsEstados, idsEstudiantes, idsTipos);
     }
 
     public List<Razon> obtenerRazones(Integer[] idsEstados,

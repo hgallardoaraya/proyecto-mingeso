@@ -23,6 +23,10 @@ const links = [
   {
     href: "/cuotas",
     label: "Ver cuotas"
+  },
+  {
+    href: "/cuotas/pagar/estudiantes",
+    label: "Registrar pagos"
   }
 ]
 

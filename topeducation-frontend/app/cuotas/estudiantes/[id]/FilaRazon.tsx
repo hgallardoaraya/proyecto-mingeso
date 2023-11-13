@@ -1,4 +1,3 @@
-import Estudiante from "@/types/Estudiante";
 import Razon from "@/types/Razon";
 
 interface FilaRazonProps {
