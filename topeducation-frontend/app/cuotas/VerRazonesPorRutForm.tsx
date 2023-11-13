@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { ResponseRazones } from "@/types/Responses";
 import Link from "next/link";
 
 export default function VerRazonesPorRutForm(){

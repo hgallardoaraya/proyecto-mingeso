@@ -29,7 +29,7 @@ public class RazonController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RazonesResponse> obtenerRazones(
             @RequestParam(value = "estados", required = false) Integer[] estados,
-            @RequestParam(value = "estudiantes") Integer[] estudiantes,
+            @RequestParam(value = "estudiantes", required = false) Integer[] estudiantes,
             @RequestParam(value = "tipos", required = false) Integer[] tipos
     ){
         List<Razon> razones = razonService.obtenerRazones(estados, estudiantes, tipos);

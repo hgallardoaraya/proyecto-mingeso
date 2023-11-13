@@ -1,9 +1,11 @@
+import EntradaReporte from "./EntradaReporte";
 import Estudiante from "./Estudiante";
+import Pago from "./Pago";
 import Razon from "./Razon";
 
 export interface Response {
-  message: string;
-  status: number;
+  message: string | null;
+  status: number | null;
 }
 
 export interface ResponseEstudiante extends Response {
@@ -16,4 +18,12 @@ export interface ResponseEstudiantes extends Response {
 
 export interface ResponseRazones extends Response {
   razones: Array<Razon>;
+}
+
+export interface ResponsePago extends Response {
+  pago: Pago | null;
+}
+
+export interface ResponseResumen extends Response {
+  reporte: Array<EntradaReporte>;
 }

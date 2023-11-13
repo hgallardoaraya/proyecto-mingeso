@@ -31,11 +31,9 @@ public class Razon {
     Integer idEstudiante;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_tipo_razon", referencedColumnName = "id")
-    @JsonManagedReference(value="razon_tipo")
     TipoRazon tipo;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_estado_razon", referencedColumnName = "id")
-    @JsonManagedReference(value="razon_estado")
     EstadoRazon estado;
     @ManyToMany(mappedBy = "razones")
     @JsonBackReference(value="pagos_razones")

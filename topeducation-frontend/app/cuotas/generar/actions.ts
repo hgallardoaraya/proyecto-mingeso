@@ -16,6 +16,7 @@ export async function generarCuotas( rut:string, numCuotas:string ) {
   const rawResponse = await response.json();
 
   revalidateTag('obtenerRazon' + rut);
+  revalidateTag('obtenerReporte');
 
   return rawResponse;
 }

@@ -1,10 +1,7 @@
-"use client";
-
 import Razon from "@/types/Razon";
-import { useState } from "react";
 
-export default function FilaRazonPago({razon}:{razon: Razon}){  
-  const [razonElegida, setRazonElegida] = useState(false);
+export default function FilaRazonPago({razon, handleCheckboxChange}:{razon: Razon, handleCheckboxChange: any}){  
+  
   return(
     <tr>      
       <td>{ razon.id }</td>
@@ -14,7 +11,7 @@ export default function FilaRazonPago({razon}:{razon: Razon}){
       <td>{ razon.fechaFin }</td>
       <td>{ razon.tipo.tipo }</td>
       <td>{ razon.estado.estado }</td>
-      <input type="checkbox" value={ razon.id } checked={razonElegida} onChange={ (e) => setRazonElegida(!razonElegida) }/>
+      <td><input type="checkbox" value={ razon.id } onChange={ handleCheckboxChange } /></td>
     </tr>
   );
 }

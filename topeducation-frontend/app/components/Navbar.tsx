@@ -25,8 +25,20 @@ const links = [
     label: "Ver cuotas"
   },
   {
-    href: "/cuotas/pagar/estudiantes",
+    href: "/pagos/estudiantes",
     label: "Registrar pagos"
+  },
+  {
+    href: "/examenes/importar",
+    label: "Importar exámenes"
+  },
+  {
+    href: "/calculos/planilla",
+    label: "Calcular planilla"
+  },
+  {
+    href: "/calculos/reporte",
+    label: "Reporte resúmen"
   }
 ]
 

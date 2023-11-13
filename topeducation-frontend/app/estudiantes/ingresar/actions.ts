@@ -17,6 +17,7 @@ export async function ingresarEstudiante( estudiante: IngresarEstudiante ) {
   const rawResponse = await response.json();
 
   revalidateTag('obtenerEstudiantes')
+  revalidateTag('obtenerReporte')
 
   return rawResponse;
 }

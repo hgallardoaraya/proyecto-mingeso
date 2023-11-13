@@ -33,7 +33,7 @@ public class ExamenController {
         return new ResponseEntity<>(
                 new Response(
                         HttpStatus.CREATED.value(),
-                        "Examen importado con éxito."),
+                        "Exámenes importados con éxito."),
                 HttpStatus.CREATED);
     }
 }

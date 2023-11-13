@@ -1,4 +1,3 @@
-import TablaRazones from "./estudiante/[id]/TablaRazones";
 import VerRazonesPorRutForm from "./VerRazonesPorRutForm";
 
 export default function RazonesPage(){
