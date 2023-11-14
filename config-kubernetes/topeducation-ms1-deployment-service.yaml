@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: topeducation-ms1-deployment
+  labels:
+    app: topeducation-ms1-deployment
+spec:
+  selector:
+    matchLabels:
+      app: topeducation-ms1-deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: topeducation-ms1-deployment
+    spec:
+      containers:
+        - name: topeducation-ms1
+          image: polloh/topeducation-ms1:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: http://config-server-service:8084
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka-server-service:8761
+            - name: eureka.instance.preferIpAddress
+              value: "true"
+            - name: MYSQL_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config-map
+                  key: MYSQL_DB_HOST
+            - name: MYSQL_DB_1
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config-map
+                  key: MYSQL_DB_1
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-root-credentials
+                  key: MYSQL_ROOT_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-root-credentials
+                  key: MYSQL_ROOT_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: topeducation-ms1-service
+  labels:
+    app: topeducation-ms1-service
+spec:
+  selector:
+    app: topeducation-ms1-deployment
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: LoadBalancer

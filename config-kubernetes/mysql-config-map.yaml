@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config-map
+  labels:
+    app: mysql-config-map
+data:
+  MYSQL_DB_HOST: mysql
+  MYSQL_DB_1: topeducation_db_1
+  MYSQL_DB_2: topeducation_db_2
+  MYSQL_DB_3: topeducation_db_3
