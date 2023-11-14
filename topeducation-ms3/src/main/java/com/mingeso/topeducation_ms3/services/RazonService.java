@@ -17,7 +17,7 @@ public class RazonService {
     WebClient razonWebClient;
 
     public RazonService(WebClient.Builder webClientBuilder){
-        this.razonWebClient = webClientBuilder.baseUrl("http://localhost:8082/razones").build();
+        this.razonWebClient = webClientBuilder.baseUrl("http://gateway-server-service:8080/razones").build();
     }
 
     public List<RazonDTO> obtenerRazones(){
