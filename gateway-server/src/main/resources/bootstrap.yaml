@@ -1,7 +1,13 @@
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://eureka-server-service:8761/eureka/
 spring:
   application:
-    name: gateway_server
+    name: gateway-server
   cloud:
     config:
       enabled: true
-      uri: http://localhost:8084
+      uri: http://config-server-service:8081
