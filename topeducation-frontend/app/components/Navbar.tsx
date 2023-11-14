@@ -47,6 +47,7 @@ export function Navbar() {
 
   return(
     <nav className="px-6 py-3">
+      CAMBIO
       <ul className="flex gap-3">
         {links.map(( link, index ) => 
           <li key={ index }>
