@@ -129,7 +129,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   location                        = "Brazil South"
   size                            = "Standard_B2s"
   admin_username                  = "hktr"
-  admin_password                  = "Chuncho.1098"
+  admin_password                  = "1234"
   disable_password_authentication = false
   network_interface_ids = [
     azurerm_network_interface.main.id,
